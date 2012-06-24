@@ -5,7 +5,7 @@
 (deftest test-convert-line []
   (let [line "This is the line we need to count. All of the words should count."
         seq-line ["this" "is" "the" "line" "we" "need" "to" "count" "all" "of" "the" "words" "should" "count"]]
-    (is (= seq-line (convert-line-to-words line))))) 
+    (is (= seq-line (convert-to-words line))))) 
 
 (deftest test-line-count []
   (let [line "This is the line we need to count. All of the words should count."

@@ -1,5 +1,6 @@
 (ns stylo.core
-  (:use com.mefesto.wabbitmq))
+  (:gen-class :main true)
+  (:use com.mefesto.wabbitmq, stylo.process))
 
 (def stylo-broker {:host "localhost" :username "guest" :password "guest"})
 
@@ -15,6 +16,12 @@
     (queue-declare "general-response.queue")
     (queue-bind "general-response.queue" "general-response.exchange" "general-response")))
 
+(with-broker stylo-broker 
+  (with-channel
+    (exchange-declare "frequency.exchange" "direct")
+    (queue-declare "frequency.queue")
+    (queue-bind "frequency.queue" "frequency.exchange" "frequency")))
+
 (defn send-reverse
   "Reverse the incoming string and send it back to the message queue"
   [original]
@@ -22,6 +29,14 @@
     (with-channel
       (with-exchange "general-response.exchange"
         (publish "general-response" (.getBytes (apply str (reverse original))))))))
+
+(defn send-frequency
+  "Calculate the word frequencies in the incoming string and publish results to queue."
+  [original]
+  (with-broker stylo-broker
+    (with-channel
+      (with-exchange "general-response.exchange"
+        (publish "general-response" (.getBytes (apply str (count-words original))))))))
 
 (defn reverse-consumer []
   (with-broker stylo-broker 
@@ -36,3 +51,9 @@
       (with-queue "frequency.queue"
         (doseq [msg (consuming-seq true)]
           (send-frequency (String. (:body msg))))))))
+
+(defn -main [consumer]
+  (cond
+    (= consumer "reverse") (reverse-consumer)
+    (= consumer "frequency") (freq-consumer)
+    :else (println "No consumer by that name available")))
