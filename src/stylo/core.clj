@@ -1,31 +1,38 @@
 (ns stylo.core
   (:use com.mefesto.wabbitmq))
 
-(def test-broker {:host "localhost" :username "guest" :password "guest"})
+(def stylo-broker {:host "localhost" :username "guest" :password "guest"})
 
-(with-broker test-broker 
+(with-broker stylo-broker 
   (with-channel
-    (exchange-declare "test.exchange" "direct")
-    (queue-declare "test.queue")
-    (queue-bind "test.queue" "test.exchange" "test")))
+    (exchange-declare "reverse.exchange" "direct")
+    (queue-declare "reverse.queue")
+    (queue-bind "reverse.queue" "reverse.exchange" "reverse")))
 
-(with-broker test-broker 
+(with-broker stylo-broker 
   (with-channel
-    (exchange-declare "test-response.exchange" "direct")
-    (queue-declare "test-response.queue")
-    (queue-bind "test-response.queue" "test-response.exchange" "test-response")))
+    (exchange-declare "general-response.exchange" "direct")
+    (queue-declare "general-response.queue")
+    (queue-bind "general-response.queue" "general-response.exchange" "general-response")))
 
 (defn send-reverse
   "Reverse the incoming string and send it back to the message queue"
   [original]
-  (with-broker test-broker
+  (with-broker stylo-broker
     (with-channel
-      (with-exchange "test-response.exchange"
-        (publish "test-response" (.getBytes (apply str (reverse original))))))))
+      (with-exchange "general-response.exchange"
+        (publish "general-response" (.getBytes (apply str (reverse original))))))))
 
-(defn test-consumer []
-  (with-broker test-broker 
+(defn reverse-consumer []
+  (with-broker stylo-broker 
     (with-channel
-      (with-queue "test.queue"
+      (with-queue "reverse.queue"
         (doseq [msg (consuming-seq true)] ; consumes messages with auto-acknowledge enabled
           (send-reverse (String. (:body msg))))))))
+
+(defn freq-consumer []
+  (with-broker stylo-broker
+    (with-channel
+      (with-queue "frequency.queue"
+        (doseq [msg (consuming-seq true)]
+          (send-frequency (String. (:body msg))))))))
