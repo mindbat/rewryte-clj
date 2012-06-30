@@ -78,4 +78,5 @@
     (= consumer "reverse") (reverse-consumer)
     (= consumer "frequency") (freq-consumer)
     (= consumer "scramble") (scramble-consumer)
+    (= consumer "all") (dorun (pcalls reverse-consumer freq-consumer scramble-consumer))
     :else (println "No consumer by that name available")))
