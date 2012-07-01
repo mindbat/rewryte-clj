@@ -1,6 +1,6 @@
 (ns stylo.core
   (:gen-class :main true)
-  (:use com.mefesto.wabbitmq, stylo.process))
+  (:use com.mefesto.wabbitmq, stylo.process, clojure.string))
 
 (def stylo-broker {:host "localhost" :username "guest" :password "guest"})
 
@@ -50,7 +50,7 @@
   (with-broker stylo-broker
     (with-channel
       (with-exchange "general-response.exchange"
-        (publish "general-response" (.getBytes (apply str (scramble-words original))))))))
+        (publish "general-response" (.getBytes (join " " (scramble-words original))))))))
 
 (defn reverse-consumer []
   (with-broker stylo-broker 
