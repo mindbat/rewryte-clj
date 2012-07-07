@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar stylo.jar all
+java -jar stylo.jar frequency
