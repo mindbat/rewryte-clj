@@ -1,5 +1,5 @@
-(ns stylo.test.process
-  (:use [stylo.process])
+(ns rewryte.test.process
+  (:use [rewryte.process])
   (:use [clojure.test]))
 
 (deftest test-convert-line []

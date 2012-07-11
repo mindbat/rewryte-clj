@@ -1,4 +1,4 @@
-(ns stylo.process
+(ns rewryte.process
   (:use clojure.string))
 
 (defn convert-to-words

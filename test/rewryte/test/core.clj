@@ -1,5 +1,5 @@
-(ns stylo.test.core
-  (:use [stylo.core])
+(ns rewryte.test.core
+  (:use [rewryte.core])
   (:use [clojure.test]))
 
 (deftest replace-me ;; FIXME: write
