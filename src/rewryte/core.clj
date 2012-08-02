@@ -1,6 +1,6 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use com.mefesto.wabbitmq, rewryte.process, clojure.string))
+  (:use com.mefesto.wabbitmq, rewryte.process, rewryte.mongo, clojure.string))
 
 (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
 
@@ -29,7 +29,7 @@
     (with-channel
       (with-queue "frequency.queue"
         (doseq [msg (consuming-seq true)]
-          (send-frequency (String. (:body msg))))))))
+          (send-frequency ((apply get-document (split (String. (:body msg)) #":")) :document)))))))
 
 (defn -main [consumer]
   (cond

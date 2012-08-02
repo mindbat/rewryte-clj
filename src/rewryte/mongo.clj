@@ -19,4 +19,4 @@
   (let [doc-match {:user_id user-id :document_name doc-name}]
     (mcore/connect! mongo-host)
     (mcore/set-db! (mcore/get-db "data"))
-    (mcoll/find-maps "docs" doc-match))) 
+    (mcoll/find-one-as-map "docs" doc-match))) 
