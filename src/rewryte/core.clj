@@ -43,9 +43,10 @@
       (with-queue "frequency.queue"
         (doseq [msg (consuming-seq true)]
           (let [body (String. (:body msg))
-                mongo-doc (apply get-document (split body #":"))
-                user-id (mongo-doc :user_id)
-                doc-name (mongo-doc :document_name)
+                split-body (split body #":")
+                user-id (int (first split-body))
+                doc-name (second split-body)
+                mongo-doc (get-document user-id doc-name)
                 document (mongo-doc :document)
                 results (generate-string (count-words document))]
             (save-results user-id doc-name results)
