@@ -1,6 +1,6 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use com.mefesto.wabbitmq, rewryte.process, rewryte.mongo, clojure.string))
+  (:use com.mefesto.wabbitmq, rewryte.process, rewryte.mongo, clojure.string, cheshire.core))
 
 (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
 
@@ -47,7 +47,7 @@
                 user-id (mongo-doc :user_id)
                 doc-name (mongo-doc :document_name)
                 document (mongo-doc :document)
-                results (count-words document)]
+                results (generate-string (count-words document))]
             (save-results user-id doc-name results)
             (send-results-published user-id doc-name)))))))
 
