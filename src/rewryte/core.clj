@@ -16,20 +16,40 @@
     (queue-declare "frequency.queue")
     (queue-bind "frequency.queue" "frequency.exchange" "frequency")))
 
-(defn send-frequency
-  "Calculate the word frequencies in the incoming string and publish results to queue."
-  [original]
+(defn declare-queue
+  "Declare a new rabbit-mq queue"
+  [exchange-name queue-name short-name]
   (with-broker rewryte-broker
     (with-channel
-      (with-exchange "general-response.exchange"
-        (publish "general-response" (.getBytes (apply str (count-words original))))))))
+      (exchange-declare exchange-name "direct")
+      (queue-declare queue-name)
+      (queue-bind queue-name exchange-name short-name))))
+
+(defn send-results-published
+  "Notify rabbitmq that the user results are ready"
+  [user-id doc-name]
+  (let [exchange-name (str user-id "-response.exchange")
+        queue-name (str user-id "-response.queue")
+        short-name (str user-id "-response")]
+    (declare-queue exchange-name queue-name short-name)
+    (with-broker rewryte-broker
+      (with-channel
+        (with-exchange exchange-name 
+          (publish short-name (.getBytes doc-name)))))))
 
 (defn freq-consumer []
   (with-broker rewryte-broker
     (with-channel
       (with-queue "frequency.queue"
         (doseq [msg (consuming-seq true)]
-          (send-frequency ((apply get-document (split (String. (:body msg)) #":")) :document)))))))
+          (let [body (String. (:body msg))
+                mongo-doc (apply get-document (split body #":"))
+                user-id (mongo-doc :user_id)
+                doc-name (mongo-doc :document_name)
+                document (mongo-doc :document)
+                results (count-words document)]
+            (save-results user-id doc-name results)
+            (send-results-published user-id doc-name)))))))
 
 (defn -main [consumer]
   (cond
