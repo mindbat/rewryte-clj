@@ -44,7 +44,7 @@
         (doseq [msg (consuming-seq true)]
           (let [body (String. (:body msg))
                 split-body (split body #":")
-                user-id (int (first split-body))
+                user-id (Integer/parseInt (first split-body))
                 doc-name (second split-body)
                 mongo-doc (get-document user-id doc-name)
                 document (mongo-doc :document)
