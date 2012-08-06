@@ -4,9 +4,9 @@
 
 (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
 
-(declare-queue rewyte-broker "general-response.exchange" "general-response.queue" "general-response")
+(declare-queue rewryte-broker "general-response.exchange" "general-response.queue" "general-response")
 
-(declare-queue rewyte-broker "frequency.exchange" "frequency.queue" "frequency")
+(declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
 
 (defn send-results-published
   "Notify rabbitmq that the user results are ready"
@@ -18,7 +18,7 @@
     (rabbit-publish rewryte-broker exchange-name short-name doc-name)))
 
 (defn frequency-consumer [message-body]
-  (let [split-body (split body #":")
+  (let [split-body (split message-body #":")
         user-id (Integer/parseInt (first split-body))
         doc-name (second split-body)
         mongo-doc (get-document user-id doc-name)

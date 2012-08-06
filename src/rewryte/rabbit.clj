@@ -13,7 +13,7 @@
 (defn start-consumer
   "Start up a consumer for a given queue"
   [broker-map queue-name consumer-function]
-  (with-broker broker-name
+  (with-broker broker-map
     (with-channel
       (with-queue queue-name
         (doseq [msg (consuming-seq true)]
