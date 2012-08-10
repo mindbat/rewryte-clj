@@ -23,8 +23,9 @@
         doc-name (second split-body)
         mongo-doc (get-document user-id doc-name)
         document (mongo-doc :document)
-        results (generate-string (count-words document))]
-    (save-results user-id doc-name results)
+        results-map (count-words document)
+        results (generate-string results-map)]
+    (save-results user-id doc-name results results-map)
     (send-results-published user-id doc-name)))
 
 (defn -main [consumer]
