@@ -6,8 +6,8 @@
 
 (defn save-results
   "Save the given results to mongodb"
-  [user-id doc-name results-string results-map]
-  (let [doc-match {:user_id user-id :document_name doc-name}
+  [account-id doc-name results-string results-map]
+  (let [doc-match {:account_id account-id :document_name doc-name}
         doc-update (assoc results-map :results results-string)]
     (mcore/connect! mongo-host)
     (mcore/set-db! (mcore/get-db "data"))
@@ -15,8 +15,8 @@
 
 (defn get-document
   "Fetch the given document from mongodb"
-  [user-id doc-name]
-  (let [doc-match {:user_id user-id :document_name doc-name}]
+  [account-id doc-name]
+  (let [doc-match {:account_id account-id :document_name doc-name}]
     (mcore/connect! mongo-host)
     (mcore/set-db! (mcore/get-db "data"))
     (mcoll/find-one-as-map "docs" doc-match))) 

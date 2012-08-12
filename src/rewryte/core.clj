@@ -9,24 +9,24 @@
 (declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
 
 (defn send-results-published
-  "Notify rabbitmq that the user results are ready"
-  [user-id doc-name]
-  (let [exchange-name (str user-id "-response.exchange")
-        queue-name (str user-id "-response.queue")
-        short-name (str user-id "-response")]
+  "Notify rabbitmq that the account results are ready"
+  [account-id doc-name]
+  (let [exchange-name (str account-id "-response.exchange")
+        queue-name (str account-id "-response.queue")
+        short-name (str account-id "-response")]
     (declare-queue rewryte-broker exchange-name queue-name short-name)
     (rabbit-publish rewryte-broker exchange-name short-name doc-name)))
 
 (defn frequency-consumer [message-body]
   (let [split-body (split message-body #":")
-        user-id (Integer/parseInt (first split-body))
+        account-id (Integer/parseInt (first split-body))
         doc-name (second split-body)
-        mongo-doc (get-document user-id doc-name)
+        mongo-doc (get-document account-id doc-name)
         document (mongo-doc :document)
         results-map (count-words document)
         results (generate-string results-map)]
-    (save-results user-id doc-name results results-map)
-    (send-results-published user-id doc-name)))
+    (save-results account-id doc-name results results-map)
+    (send-results-published account-id doc-name)))
 
 (defn -main [consumer]
   (cond
