@@ -6,9 +6,9 @@
 
 (defn save-results
   "Save the given results to mongodb"
-  [account-id doc-name results-string results-map]
+  [account-id doc-name results-string results-map pages]
   (let [doc-match {:account_id account-id :document_name doc-name}
-        doc-update {:frequencies results-map :results results-string}]
+        doc-update {:frequencies results-map :results results-string :pages pages}]
     (mcore/connect! mongo-host)
     (mcore/set-db! (mcore/get-db "docs"))
     (mcoll/update "account" doc-match {:$set doc-update})))

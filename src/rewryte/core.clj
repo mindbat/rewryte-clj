@@ -24,8 +24,10 @@
         mongo-doc (get-document account-id doc-name)
         document (mongo-doc :document)
         results-map (count-words document)
-        results (generate-string results-map)]
-    (save-results account-id doc-name results results-map)
+        results (generate-string results-map)
+        pages-seq (paginate document)
+        pages (generate-string (zipmap (range (count pages)) pages))]
+    (save-results account-id doc-name results results-map pages)
     (send-results-published account-id doc-name)))
 
 (defn -main [consumer]
