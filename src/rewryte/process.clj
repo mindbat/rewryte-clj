@@ -33,3 +33,11 @@
   "Split a string up into a vector of text pages"
   [text]
   (map #(apply str %) (split-n 250 (convert-to-words text))))
+
+(defn avg-sentence-length
+  "Calculate the average sentence length in words for the given text"
+  [text]
+  (let [sentences (split text #"\. ")
+        num-sentences (count sentences)
+        total-words (count (convert-to-words text))]
+  (float (/ total-words num-sentences))))
