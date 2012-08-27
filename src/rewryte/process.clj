@@ -37,7 +37,12 @@
 (defn avg-sentence-length
   "Calculate the average sentence length in words for the given text"
   [text]
-  (let [sentences (split text #"\. ")
+  (let [sentences (split text #"[.?!] ")
         num-sentences (count sentences)
         total-words (count (convert-to-words text))]
   (float (/ total-words num-sentences))))
+
+(defn convert-to-paragraphs
+  "Convert a text into a sequence of paragraphs"
+  [text]
+  (map #(replace % #"\n" "") (split text #"\n\n")))
