@@ -27,8 +27,10 @@
         results (generate-string results-map)
         pages-seq (paginate document)
         pages (generate-string (zipmap (range (count pages)) pages))
-        sentence-length (avg-sentence-length document)]
-    (save-results account-id doc-name results results-map pages sentence-length)
+        sentence-length (avg-sentence-length document)
+        paragraph-length-words (avg-paragraph-length-words document)
+        paragraph-length-sentences (avg-paragraph-length-sentences document)]
+    (save-results account-id doc-name results results-map pages sentence-length paragraph-length-words paragraph-length-sentences)
     (send-results-published account-id doc-name)))
 
 (defn -main [consumer]

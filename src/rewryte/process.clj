@@ -34,10 +34,15 @@
   [text]
   (map #(apply str %) (split-n 250 (convert-to-words text))))
 
+(defn convert-to-sentences
+  "Convert the incoming text into a sequence of sentences"
+  [text]
+  (split text #"[.?!]\s+"))
+
 (defn avg-sentence-length
   "Calculate the average sentence length in words for the given text"
   [text]
-  (let [sentences (split text #"[.?!] ")
+  (let [sentences (convert-to-sentences text) 
         num-sentences (count sentences)
         total-words (count (convert-to-words text))]
   (float (/ total-words num-sentences))))
@@ -46,3 +51,19 @@
   "Convert a text into a sequence of paragraphs"
   [text]
   (map #(replace % #"\n" "") (split text #"\n\n")))
+
+(defn avg-paragraph-length-words
+  "Calculate the average paragraph length in words for the given text"
+  [text]
+  (let [paragraphs (convert-to-paragraphs text)
+        num-paragraphs (count paragraphs)
+        total-words (count (convert-to-words text))]
+  (float (/ total-words num-paragraphs))))
+
+(defn avg-paragraph-length-sentences
+  "Calculate the average paragraph length in sentences for the given text"
+  [text]
+  (let [paragraphs (convert-to-paragraphs text)
+        num-paragraphs (count paragraphs)
+        total-sentences (count (convert-to-sentences text))]
+  (float (/ total-sentences num-paragraphs))))
