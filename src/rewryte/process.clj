@@ -32,7 +32,7 @@
 (defn paginate
   "Split a string up into a vector of text pages"
   [text]
-  (map #(apply str %) (split-n 250 (convert-to-words text))))
+  (join " " (flatten (split-n 250 (convert-to-words text)))))
 
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
