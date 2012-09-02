@@ -50,7 +50,7 @@
 (defn convert-to-paragraphs
   "Convert a text into a sequence of paragraphs"
   [text]
-  (map #(replace % #"\n" "") (split text #"\n\n")))
+  (map #(replace % #"[\n\r]" "") (split text #"(\n\n|\r\n\r)")))
 
 (defn avg-paragraph-length-words
   "Calculate the average paragraph length in words for the given text"
