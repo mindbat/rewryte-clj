@@ -24,12 +24,13 @@
         mongo-doc (get-document account-id doc-name)
         document (mongo-doc :document)
         frequencies (count-words document)
+        max-frequency (apply max (vals frequencies))
         results (vec (sort-by val > frequencies))
         pages (paginate document)
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-name results frequencies pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (save-results account-id doc-name results frequencies max-frequency pages sentence-length paragraph-length-words paragraph-length-sentences)
     (send-results-published account-id doc-name)))
 
 (defn -main [consumer]
