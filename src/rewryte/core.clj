@@ -26,7 +26,7 @@
         results-map (count-words document)
         results (generate-string results-map)
         pages-seq (paginate document)
-        pages (generate-string (zipmap (range (count pages-seq)) pages-seq))
+        pages (generate-string pages-seq)
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
