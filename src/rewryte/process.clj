@@ -29,10 +29,15 @@
   [incoming]
   (frequencies (convert-to-keywords incoming)))
 
+(defn convert-to-paragraphs
+  "Convert a text into a sequence of paragraphs"
+  [text]
+  (map #(replace % #"[\n\r]" "") (split text #"(\n\n|\r\n\r)")))
+
 (defn paginate
   "Split a string up into a vector of text pages"
   [text]
-  (map #(join " " %) (split-n 250 (split text #"\s+"))))
+  (split-n 10 (convert-to-paragraphs)))
 
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
@@ -42,15 +47,10 @@
 (defn avg-sentence-length
   "Calculate the average sentence length in words for the given text"
   [text]
-  (let [sentences (convert-to-sentences text) 
+  (let [sentences (convert-to-sentences text)
         num-sentences (count sentences)
         total-words (count (convert-to-words text))]
   (float (/ total-words num-sentences))))
-
-(defn convert-to-paragraphs
-  "Convert a text into a sequence of paragraphs"
-  [text]
-  (map #(replace % #"[\n\r]" "") (split text #"(\n\n|\r\n\r)")))
 
 (defn avg-paragraph-length-words
   "Calculate the average paragraph length in words for the given text"
