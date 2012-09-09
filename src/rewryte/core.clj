@@ -26,11 +26,10 @@
         results-map (count-words document)
         results (generate-string results-map)
         pages-seq (paginate document)
-        pages (generate-string pages-seq)
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-name results results-map pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (save-results account-id doc-name results results-map pages-seq sentence-length paragraph-length-words paragraph-length-sentences)
     (send-results-published account-id doc-name)))
 
 (defn -main [consumer]
