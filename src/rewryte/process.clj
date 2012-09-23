@@ -88,7 +88,7 @@
 (defn remove-pronouns
   "Remove the pronouns from a given text"
   [text]
-  (let [articles #"\s(his|her|him|hers|this|that|these|those|their|theirs)\s"]
+  (let [articles #"\s(he|she|it|i|you|your|we|our|my|them|they|us|his|her|him|hers|this|that|these|those|their|theirs)\s"]
     (replace text articles " ")))
 
 (defn remove-conjunctions
