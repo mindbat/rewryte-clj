@@ -1,6 +1,11 @@
 (ns rewryte.process
   (:use clojure.string))
 
+(defn url-safe
+  "Generate a url-safe version of the string"
+  [text]
+  (replace (lower-case text) #"[^0-9a-zA-Z]" "_"))
+
 (defn split-n
   "Split the given sequence into a vector of vectors made of every nth element of the original sequence.
    Ex:

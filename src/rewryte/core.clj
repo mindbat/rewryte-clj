@@ -23,6 +23,7 @@
         doc-name (second split-body)
         mongo-doc (get-document account-id doc-name)
         document (mongo-doc :document)
+        url-name (url-safe doc-name)
         frequencies (count-words document)
         max-frequency (apply max (vals frequencies))
         results (vec (sort-by val > frequencies))
@@ -30,8 +31,8 @@
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-name results frequencies max-frequency pages sentence-length paragraph-length-words paragraph-length-sentences)
-    (send-results-published account-id doc-name)))
+    (save-results account-id doc-name url-name results frequencies max-frequency pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (send-results-published account-id url-name)))
 
 (defn -main [consumer]
   (cond
