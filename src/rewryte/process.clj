@@ -72,3 +72,37 @@
         num-paragraphs (count paragraphs)
         total-sentences (count (convert-to-sentences text))]
   (float (/ total-sentences num-paragraphs))))
+
+(defn remove-articles
+  "Remove the articles from a given text"
+  [text]
+  (let [articles #"\s(the|a|an)\s"]
+    (replace text articles " ")))
+
+(defn remove-prepositions
+  "Remove the prepositions from a given text"
+  [text]
+  (let [articles #"\s(of|on|in|to|from|with|for|by)\s"]
+    (replace text articles " ")))
+
+(defn remove-pronouns
+  "Remove the pronouns from a given text"
+  [text]
+  (let [articles #"\s(his|her|him|hers|this|that|these|those|their|theirs)\s"]
+    (replace text articles " ")))
+
+(defn remove-conjunctions
+  "Remove the conjunctions from a given text"
+  [text]
+  (let [articles #"\s(and|but|or)\s"]
+    (replace text articles " ")))
+
+(defn remove-fluff
+  "Remove the small, common words from the text"
+  [text]
+  (-> text
+    (lower-case)
+    (remove-articles)
+    (remove-prepositions)
+    (remove-pronouns)
+    (remove-conjunctions)))

@@ -25,13 +25,16 @@
         document (mongo-doc :document)
         url-name (url-safe doc-name)
         frequencies (count-words document)
-        max-frequency (apply max (vals frequencies))
-        results (vec (sort-by val > frequencies))
+        freq-standard (count-words (remove-fluff document))
+        max-frequency-full (apply max (vals frequencies))
+        results-full (vec (sort-by val > frequencies))
+        max-frequency-standard (apply max (vals freq-standard))
+        results-standard (vec (sort-by val > freq-standard))
         pages (paginate document)
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-name url-name results frequencies max-frequency pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (save-results account-id doc-name url-name results-full results-standard frequencies max-frequency-full max-frequency-standard pages sentence-length paragraph-length-words paragraph-length-sentences)
     (send-results-published account-id url-name)))
 
 (defn -main [consumer]
