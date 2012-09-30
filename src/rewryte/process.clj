@@ -22,7 +22,7 @@
 (defn convert-to-words
   "Convert a line into a sequence of words"
   [line]
-  (split (replace (lower-case line) #"[^ a-zA-Z0-9]+" "") #"\s+"))
+  (split (replace (lower-case line) #"[^ a-zA-Z0-9\n\r]+" "") #"\s+"))
 
 (defn convert-to-keywords
   "Convert a line into a sequence of keywords"
