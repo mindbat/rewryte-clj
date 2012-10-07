@@ -17,7 +17,9 @@
     (with-channel
       (with-queue queue-name
         (doseq [msg (consuming-seq true)]
-          (consumer-function (String. (:body msg))))))))
+          (try
+            (consumer-function (String. (:body msg)))
+            (catch Exception e (.printStackTrace e))))))))
 
 (defn rabbit-publish
   "Publish the given content to a rabbit-mq queue"
