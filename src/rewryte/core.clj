@@ -4,10 +4,6 @@
 
 (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
 
-(declare-queue rewryte-broker "general-response.exchange" "general-response.queue" "general-response")
-
-(declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
-
 (defn send-results-published
   "Notify rabbitmq that the account results are ready"
   [account-id doc-name]
@@ -39,5 +35,8 @@
 
 (defn -main [consumer]
   (cond
-    (= consumer "frequency") (start-consumer rewryte-broker "frequency.queue" frequency-consumer)
+    (= consumer "frequency") (do
+                                (declare-queue rewryte-broker "general-response.exchange" "general-response.queue" "general-response")
+                                (declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
+                                (start-consumer rewryte-broker "frequency.queue" frequency-consumer))
     :else (println "No consumer by that name available")))
