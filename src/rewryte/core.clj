@@ -1,6 +1,6 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, clojure.string, cheshire.core))
+  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, clojure.string, cheshire.core))
 
 (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
 
@@ -12,6 +12,15 @@
         short-name (str account-id "-response")]
     (declare-queue rewryte-broker exchange-name queue-name short-name)
     (rabbit-publish rewryte-broker exchange-name short-name doc-name)))
+
+(defn queue-doc-compare
+  "Queue a doc for comparison"
+  [account-id doc-name]
+  (let [exchange-name "compare.exchange"
+        queue-name "compare.queue"
+        short-name "compare"
+        message (str account-id ":" doc-name)]
+    (rabbit-publish rewryte-broker exchange-name short-name message)))
 
 (defn frequency-consumer [message-body]
   (let [split-body (split message-body #":")
@@ -31,6 +40,16 @@
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
     (save-results account-id doc-name url-name results-full results-standard frequencies max-frequency-full max-frequency-standard pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (queue-doc-compare account-id doc-name)))
+
+(defn compare-consumer [message-body]
+  (let [split-body (split message-body #":")
+        account-id (Integer/parseInt (first split-body))
+        doc-name (second split-body)
+        url-name (url-safe doc-name)
+        mongo-doc (get-document account-id doc-name)
+        score (compute-score mongo-doc "perfect")]
+    (save-score account-id doc-name score)
     (send-results-published account-id url-name)))
 
 (defn -main [consumer]
@@ -38,5 +57,7 @@
     (= consumer "frequency") (do
                                 (declare-queue rewryte-broker "general-response.exchange" "general-response.queue" "general-response")
                                 (declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
-                                (start-consumer rewryte-broker "frequency.queue" frequency-consumer))
+                                (declare-queue rewryte-broker "compare.exchange" "compare.queue" "compare")
+                                (future (start-consumer rewryte-broker "frequency.queue" frequency-consumer))
+                                (future (start-consumer rewryte-broker "compare.queue" compare-consumer)))
     :else (println "No consumer by that name available")))

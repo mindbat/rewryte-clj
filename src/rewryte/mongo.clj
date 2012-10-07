@@ -21,3 +21,20 @@
     (mcore/connect! mongo-host)
     (mcore/set-db! (mcore/get-db "docs"))
     (mcoll/find-one-as-map "account" doc-match)))
+
+(defn search-collection
+  "Execute the given search query against the given collection"
+  [query collection]
+  (let [mongo-db (mcore/get-db "docs")]
+    (mcore/connect! mongo-host)
+    (mcore/set-db! mongo-db)
+    (mcoll/find-maps collection query)))
+
+(defn save-score
+  "Save the doc score to mongodb"
+  [account-id doc-name score]
+  (let [doc-match {:account_id account-id :document_name doc-name}
+        doc-update {:score score}]
+    (mcore/connect! mongo-host)
+    (mcore/set-db! (mcore/get-db "docs"))
+    (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
