@@ -1,1 +1,1 @@
-worker: java -jar app/rewryte.jar frequency
+worker: lein run -m rewryte.core frequency
