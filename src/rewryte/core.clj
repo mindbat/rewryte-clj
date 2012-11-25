@@ -2,14 +2,12 @@
   (:gen-class :main true)
   (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, clojure.string, cheshire.core))
 
-; (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
-
-(def rewryte-broker {:uri "amqp://app9174674_heroku.com:gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g@tiger.cloudamqp.com/app9174674_heroku.com"})
+(def rewryte-broker {:host "tiger.cloudamqp.com" :virtual-host "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
 
 (defn send-results-published
   "Notify rabbitmq that the account results are ready"
   [account-id doc-name]
-  (let [exchange-name (str account-id "-response.exchange")
+  (let [exchange-name ""
         queue-name (str account-id "-response.queue")
         short-name (str account-id "-response")]
     (declare-queue rewryte-broker exchange-name queue-name short-name)
@@ -18,7 +16,7 @@
 (defn queue-doc-compare
   "Queue a doc for comparison"
   [account-id doc-name]
-  (let [exchange-name "compare.exchange"
+  (let [exchange-name ""
         queue-name "compare.queue"
         short-name "compare"
         message (str account-id ":" doc-name)]
@@ -57,9 +55,6 @@
 (defn -main [consumer]
   (cond
     (= consumer "frequency") (do
-                                (declare-queue rewryte-broker "general-response.exchange" "general-response.queue" "general-response")
-                                (declare-queue rewryte-broker "frequency.exchange" "frequency.queue" "frequency")
-                                (declare-queue rewryte-broker "compare.exchange" "compare.queue" "compare")
                                 (future (start-consumer rewryte-broker "frequency.queue" frequency-consumer))
                                 (future (start-consumer rewryte-broker "compare.queue" compare-consumer)))
     :else (println "No consumer by that name available")))
