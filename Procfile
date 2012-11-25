@@ -1,1 +1,1 @@
-worker: java -jar rewryte.jar frequency
+worker: java -jar ./rewryte.jar frequency
