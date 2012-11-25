@@ -3,7 +3,7 @@
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern))
 
-(def mongo-host (get (System/getenv) "MONGODB_URI" "mongodb://127.0.0.1:27017/docs"))
+(def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
 
 (defn save-results
   "Save the given results to mongodb"
