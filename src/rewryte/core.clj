@@ -2,7 +2,9 @@
   (:gen-class :main true)
   (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, clojure.string, cheshire.core))
 
-(def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
+; (def rewryte-broker {:host "localhost" :username "guest" :password "guest"})
+
+(def rewryte-broker {:uri "amqp://app9174674_heroku.com:gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g@tiger.cloudamqp.com/app9174674_heroku.com"})
 
 (defn send-results-published
   "Notify rabbitmq that the account results are ready"
