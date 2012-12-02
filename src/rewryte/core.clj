@@ -17,10 +17,9 @@
   "Queue a doc for comparison"
   [account-id doc-name]
   (let [exchange-name ""
-        queue-name "compare.queue"
+        queue-name "compare"
         short-name "compare"
         message (str account-id ":" doc-name)]
-    (declare-queue rewryte-broker exchange-name queue-name short-name)
     (rabbit-publish rewryte-broker exchange-name short-name message)))
 
 (defn frequency-consumer [message-body]
@@ -57,5 +56,5 @@
   (cond
     (= consumer "frequency") (do
                                 (future (start-consumer rewryte-broker "frequency.queue" frequency-consumer))
-                                (future (start-consumer rewryte-broker "compare.queue" compare-consumer)))
+                                (future (start-consumer rewryte-broker "compare" compare-consumer)))
     :else (println "No consumer by that name available")))
