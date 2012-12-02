@@ -20,6 +20,7 @@
         queue-name "compare.queue"
         short-name "compare"
         message (str account-id ":" doc-name)]
+    (declare-queue rewryte-broker exchange-name queue-name short-name)
     (rabbit-publish rewryte-broker exchange-name short-name message)))
 
 (defn frequency-consumer [message-body]
