@@ -12,9 +12,9 @@
 
 (defn start-consumer
   "Start up a consumer for a given queue"
-  [broker-map queue-name consumer-function]
+  [broker-map channel-num queue-name consumer-function]
   (with-broker broker-map
-    (with-channel
+    (with-channel {:num channel-num}
       (with-queue queue-name
         (doseq [msg (consuming-seq true)]
           (try
@@ -23,8 +23,8 @@
 
 (defn rabbit-publish
   "Publish the given content to a rabbit-mq queue"
-  [broker-map exchange-name short-name content]
+  [broker-map channel-num exchange-name short-name content]
   (with-broker broker-map
-    (with-channel
+    (with-channel {:num channel-num}
       (with-exchange exchange-name
         (publish short-name (.getBytes content))))))
