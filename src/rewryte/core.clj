@@ -11,7 +11,6 @@
         queue-name (str account-id "-response.queue")
         short-name (str account-id "-response")
         channel-num 3]
-    (declare-queue rewryte-broker exchange-name queue-name short-name)
     (rabbit-publish rewryte-broker channel-num exchange-name short-name doc-name)))
 
 (defn queue-doc-compare
