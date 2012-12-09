@@ -5,7 +5,7 @@
             [langohr.basic :as lb]
             [langohr.consumers :as lc]))
 
-(def rewryte-broker {:host "tiger.cloudamqp.com" :virtual-host "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
+(def rewryte-broker {:host "tiger.cloudamqp.com" :vhost "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
 
 (defn declare-queue
   "Declare a new rabbit-mq queue"
@@ -15,7 +15,7 @@
 (defn start-consumer
   "Start up a consumer for a given queue"
   [queue-name consumer-function]
-  (let [connection (rmq/connect)
+  (let [connection (rmq/connect rewryte-broker)
         channel (lch/open connection)
         handler (fn [channel metadata ^bytes payload]
                   (consumer-function (String. payload)))]
@@ -24,8 +24,8 @@
 
 (defn rabbit-publish
   "Publish the given content to a rabbit-mq queue"
-  [broker queue-name content]
-  (let [connection (rmq/connect)
+  [queue-name content]
+  (let [connection (rmq/connect rewryte-broker)
         channel (lch/open connection)]
     (lb/publish channel "" queue-name content :content-type "text/plain")))
 
