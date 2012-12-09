@@ -2,27 +2,6 @@
   (:gen-class :main true)
   (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, clojure.string, cheshire.core))
 
-(def rewryte-broker {:host "tiger.cloudamqp.com" :virtual-host "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
-
-(defn send-results-published
-  "Notify rabbitmq that the account results are ready"
-  [account-id doc-name]
-  (let [exchange-name ""
-        queue-name (str account-id "-response.queue")
-        short-name (str account-id "-response")
-        channel-num 3]
-    (rabbit-publish rewryte-broker channel-num exchange-name short-name doc-name)))
-
-(defn queue-doc-compare
-  "Queue a doc for comparison"
-  [account-id doc-name]
-  (let [exchange-name ""
-        queue-name "compare"
-        short-name "compare"
-        message (str account-id ":" doc-name)
-        channel-num 4]
-    (rabbit-publish rewryte-broker channel-num exchange-name short-name message)))
-
 (defn frequency-consumer [message-body]
   (let [split-body (split message-body #":")
         account-id (Integer/parseInt (first split-body))
@@ -49,13 +28,13 @@
         doc-name (second split-body)
         url-name (url-safe doc-name)
         mongo-doc (get-document account-id doc-name)
-        score (compute-score mongo-doc "perfect")]
+        score (compute-score mongo-doc "perfect.queue")]
     (save-score account-id doc-name score)
     (send-results-published account-id url-name)))
 
 (defn -main [consumer]
   (cond
     (= consumer "frequency") (do
-                                (future (start-consumer rewryte-broker 1 "frequency.queue" frequency-consumer))
-                                (future (start-consumer rewryte-broker 2 "compare" compare-consumer)))
+                                (future (start-consumer "frequency.queue" frequency-consumer))
+                                (future (start-consumer "compare.queue" compare-consumer)))
     :else (println "No consumer by that name available")))

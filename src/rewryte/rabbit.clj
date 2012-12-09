@@ -1,30 +1,43 @@
 (ns rewryte.rabbit
-  (:use com.mefesto.wabbitmq))
+  (:require [langohr.core :as rmq]
+            [langohr.channel :as lch]
+            [langohr.queue :as lq]
+            [langohr.basic :as lb]
+            [langohr.consumers :as lc]))
+
+(def rewryte-broker {:host "tiger.cloudamqp.com" :vhost "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
 
 (defn declare-queue
   "Declare a new rabbit-mq queue"
-  [broker-map exchange-name queue-name short-name]
-  (with-broker broker-map 
-    (with-channel
-      (exchange-declare exchange-name "direct")
-      (queue-declare queue-name)
-      (queue-bind queue-name exchange-name short-name))))
+  [channel queue-name]
+  (lq/declare channel queue-name :auto-delete false :exclusive false))
 
 (defn start-consumer
   "Start up a consumer for a given queue"
-  [broker-map channel-num queue-name consumer-function]
-  (with-broker broker-map
-    (with-channel {:num channel-num}
-      (with-queue queue-name
-        (doseq [msg (consuming-seq true)]
-          (try
-            (consumer-function (String. (:body msg)))
-            (catch Exception e (.printStackTrace e))))))))
+  [queue-name consumer-function]
+  (let [connection (rmq/connect rewryte-broker)
+        channel (lch/open connection)
+        handler (fn [channel metadata ^bytes payload]
+                  (consumer-function (String. payload)))]
+    (declare-queue channel queue-name)
+    (lc/subscribe channel queue-name handler :auto-ack true)))
 
 (defn rabbit-publish
   "Publish the given content to a rabbit-mq queue"
-  [broker-map channel-num exchange-name short-name content]
-  (with-broker broker-map
-    (with-channel {:num channel-num}
-      (with-exchange exchange-name
-        (publish short-name (.getBytes content))))))
+  [queue-name content]
+  (let [connection (rmq/connect rewryte-broker)
+        channel (lch/open connection)]
+    (lb/publish channel "" queue-name content :content-type "text/plain")))
+
+(defn send-results-published
+  "Notify rabbitmq that the account results are ready"
+  [account-id doc-name]
+  (let [queue-name (str account-id "-response.queue")]
+    (rabbit-publish rewryte-broker queue-name doc-name)))
+
+(defn queue-doc-compare
+  "Queue a doc for comparison"
+  [account-id doc-name]
+  (let [queue-name "compare.queue"
+        message (str account-id ":" doc-name)]
+    (rabbit-publish rewryte-broker queue-name message)))
