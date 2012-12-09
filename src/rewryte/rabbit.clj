@@ -10,7 +10,7 @@
 (defn declare-queue
   "Declare a new rabbit-mq queue"
   [channel queue-name]
-  (lq/declare channel queue-name :durable true :auto-delete false :exclusive false))
+  (lq/declare channel queue-name :auto-delete false :exclusive false))
 
 (defn start-consumer
   "Start up a consumer for a given queue"
@@ -38,6 +38,6 @@
 (defn queue-doc-compare
   "Queue a doc for comparison"
   [account-id doc-name]
-  (let [queue-name "compare"
+  (let [queue-name "compare.queue"
         message (str account-id ":" doc-name)]
     (rabbit-publish rewryte-broker queue-name message)))

@@ -28,7 +28,7 @@
         doc-name (second split-body)
         url-name (url-safe doc-name)
         mongo-doc (get-document account-id doc-name)
-        score (compute-score mongo-doc "perfect")]
+        score (compute-score mongo-doc "perfect.queue")]
     (save-score account-id doc-name score)
     (send-results-published account-id url-name)))
 
@@ -36,5 +36,5 @@
   (cond
     (= consumer "frequency") (do
                                 (future (start-consumer "frequency.queue" frequency-consumer))
-                                (future (start-consumer "compare" compare-consumer)))
+                                (future (start-consumer "compare.queue" compare-consumer)))
     :else (println "No consumer by that name available")))
