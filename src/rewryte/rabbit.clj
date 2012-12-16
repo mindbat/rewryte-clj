@@ -5,7 +5,7 @@
             [langohr.basic :as lb]
             [langohr.consumers :as lc]))
 
-(def rewryte-broker {:host "tiger.cloudamqp.com" :vhost "app9174674_heroku.com" :username "app9174674_heroku.com" :password "gDiH-_Y2d-yfp8hhcacrouWgb45Hvd4g"})
+(def rewryte-broker {:uri (get (System/getenv) "CLOUDAMQP_URL" "amqp://guest:guest@127.0.0.1")})
 
 (defn declare-queue
   "Declare a new rabbit-mq queue"
