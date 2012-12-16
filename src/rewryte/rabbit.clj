@@ -27,6 +27,7 @@
   [queue-name content]
   (let [connection (rmq/connect rewryte-broker)
         channel (lch/open connection)]
+    (declare-queue channel queue-name)
     (lb/publish channel "" queue-name content :content-type "text/plain")))
 
 (defn send-results-published
