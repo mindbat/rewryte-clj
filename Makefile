@@ -1,6 +1,2 @@
-compile:
-	lein uberjar
-	cp target/rewryte.jar .
-
-launch:
-	./rewryte.sh
+run:
+	lein run -m rewryte.core frequency
