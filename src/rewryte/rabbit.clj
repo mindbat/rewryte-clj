@@ -33,11 +33,11 @@
   "Notify rabbitmq that the account results are ready"
   [account-id doc-name]
   (let [queue-name (str account-id "-response.queue")]
-    (rabbit-publish rewryte-broker queue-name doc-name)))
+    (rabbit-publish queue-name doc-name)))
 
 (defn queue-doc-compare
   "Queue a doc for comparison"
   [account-id doc-name]
   (let [queue-name "compare.queue"
         message (str account-id ":" doc-name)]
-    (rabbit-publish rewryte-broker queue-name message)))
+    (rabbit-publish queue-name message)))
