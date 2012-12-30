@@ -30,9 +30,10 @@
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
         mongo-doc (get-document account-id doc-id)
+        url-name (mongo-doc :url_name)
         score (compute-score mongo-doc "perfect.queue")]
     (save-score account-id doc-id score)
-    (send-results-published account-id doc-id)))
+    (send-results-published account-id url-name)))
 
 (defn -main [consumer]
   (cond
