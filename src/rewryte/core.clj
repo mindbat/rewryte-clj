@@ -5,9 +5,10 @@
 (defn frequency-consumer [message-body]
   (let [split-body (split message-body #":")
         account-id (Integer/parseInt (first split-body))
-        doc-name (second split-body)
-        mongo-doc (get-document account-id doc-name)
+        doc-id (second split-body)
+        mongo-doc (get-document account-id doc-id)
         document (mongo-doc :document)
+        doc-name (mongo-doc :document_name)
         url-name (url-safe doc-name)
         frequencies (count-words document)
         freq-standard (count-words (remove-fluff document))
@@ -19,18 +20,17 @@
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-name url-name results-full results-standard frequencies max-frequency-full max-frequency-standard pages sentence-length paragraph-length-words paragraph-length-sentences)
-    (queue-doc-compare account-id doc-name)))
+    (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard pages sentence-length paragraph-length-words paragraph-length-sentences)
+    (queue-doc-compare account-id doc-id)))
 
 (defn compare-consumer [message-body]
   (let [split-body (split message-body #":")
         account-id (Integer/parseInt (first split-body))
-        doc-name (second split-body)
-        url-name (url-safe doc-name)
-        mongo-doc (get-document account-id doc-name)
+        doc-id (second split-body)
+        mongo-doc (get-document account-id doc-id)
         score (compute-score mongo-doc "perfect.queue")]
-    (save-score account-id doc-name score)
-    (send-results-published account-id url-name)))
+    (save-score account-id doc-id score)
+    (send-results-published account-id doc-id)))
 
 (defn -main [consumer]
   (cond

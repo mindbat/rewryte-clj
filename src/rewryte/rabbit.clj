@@ -32,13 +32,13 @@
 
 (defn send-results-published
   "Notify rabbitmq that the account results are ready"
-  [account-id doc-name]
+  [account-id doc-id]
   (let [queue-name (str account-id "-response.queue")]
-    (rabbit-publish queue-name doc-name)))
+    (rabbit-publish queue-name doc-id)))
 
 (defn queue-doc-compare
   "Queue a doc for comparison"
-  [account-id doc-name]
+  [account-id doc-id]
   (let [queue-name "compare.queue"
-        message (str account-id ":" doc-name)]
+        message (str account-id ":" doc-id)]
     (rabbit-publish queue-name message)))
