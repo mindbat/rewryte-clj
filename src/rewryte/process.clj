@@ -73,6 +73,18 @@
         total-sentences (count (convert-to-sentences text))]
   (float (/ total-sentences num-paragraphs))))
 
+(defn sort-by-word-length
+  "Sort the given sequence of strings according to the number of words in each string"
+  [string-seq]
+  (sort-by #(count (convert-to-words %)) string-seq))
+
+(defn find-longest-sentences
+  "Find the X longest sentences in the document"
+  [text num-sentences]
+  (let [sentences (convert-to-sentences text)
+        sorted-sentences (sort-by-word-length sentences)]
+    (nthrest sorted-sentences num-sentences)))
+
 (defn remove-articles
   "Remove the articles from a given text"
   [text]
