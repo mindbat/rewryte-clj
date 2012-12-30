@@ -83,7 +83,7 @@
   [text num-sentences]
   (let [sentences (convert-to-sentences text)
         sorted-sentences (sort-by-word-length sentences)]
-    (nthrest sorted-sentences num-sentences)))
+    (take-last num-sentences sorted-sentences)))
 
 (defn remove-articles
   "Remove the articles from a given text"
