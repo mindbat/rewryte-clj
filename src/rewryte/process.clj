@@ -76,13 +76,15 @@
 (defn sort-by-word-length
   "Sort the given sequence of strings according to the number of words in each string"
   [string-seq]
-  (sort-by #(count (convert-to-words %)) string-seq))
+  (sort-by #(count (convert-to-words (first %))) string-seq))
 
 (defn find-longest-sentences
   "Find the X longest sentences in the document"
   [text num-sentences]
-  (let [sentences (convert-to-sentences text)
-        sorted-sentences (sort-by-word-length sentences)]
+  (let [paragraphs (convert-to-paragraphs text)
+        sentences-by-paragraph (map convert-to-sentences paragraphs)
+        indexed-sentences (partition 2 (flatten (map-indexed (fn [index item] (map #(vector % index) item)) sentences-by-paragraph)))
+        sorted-sentences (sort-by-word-length indexed-sentences)]
     (take-last num-sentences sorted-sentences)))
 
 (defn remove-articles
