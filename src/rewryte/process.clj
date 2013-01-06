@@ -47,7 +47,7 @@
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
   [text]
-  (split text #"[.?!]\s+"))
+  (map first (re-seq #"(\")?(\w+(\s+|[.?!]))+(\")?" text)))
 
 (defn avg-sentence-length
   "Calculate the average sentence length in words for the given text"
