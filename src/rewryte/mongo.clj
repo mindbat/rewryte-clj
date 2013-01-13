@@ -20,6 +20,13 @@
     (mcore/connect-via-uri! mongo-host)
     (mcoll/find-one-as-map "account" doc-match)))
 
+(defn get-edit-doc
+  "Fetch the given edited paragraph document from mongodb"
+  [edit-id]
+  (let [doc-match {:_id (ObjectId. edit-id)}]
+    (mcore/connect-via-uri! mongo-host)
+    (mcoll/find-one-as-map "edit" doc-match)))
+
 (defn search-collection
   "Execute the given search query against the given collection"
   [query collection]
@@ -34,3 +41,26 @@
         doc-update {:score score}]
     (mcore/connect-via-uri! mongo-host)
     (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+
+(defn update-paragraph
+  "Update the paragraph text for a given mongo document"
+  [edit-doc]
+  (let [edited-doc-id (edit-doc :edited_document_id)
+        account-id (edit-doc :account_id)
+        edited-doc (get-document account-id edited-doc-id)
+        paragraphs (edited-doc :paragraphs)
+        edited-index (edited-doc :paragraph_number)
+        new-text (edited-doc :new_text)
+        updated-paragraphs (assoc paragraphs edited-index new-text)
+        updated-doc-text (clojure.string/join "\n\n" updated-paragraphs)
+        doc-match {:account_id account-id :_id (ObjectId. edited-doc-id)}
+        doc-update {:document updated-doc-text}]
+    (mcore/connect-via-uri! mongo-host)
+    (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+
+(defn delete-doc
+  "Delete the given document from mongo-db"
+  [collection-name doc-id]
+  (let [oid (ObjectId. doc-id)]
+    (mcore/connect-via-uri! mongo-host)
+    (mcoll/remove-by-id collection-name oid)))

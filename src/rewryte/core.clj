@@ -35,9 +35,19 @@
     (save-score account-id doc-id score)
     (send-results-published account-id url-name)))
 
+(defn paragraph-consumer [message-body]
+  (let [edit-id message-body
+        edit-doc (get-edit-doc edit-id)
+        account-id (edit-doc :account_id)
+        doc-id (edit-doc :edited_document_id)]
+    (update-paragraph edit-doc)
+    (queue-doc-freq account-id doc-id)
+    (delete-doc "edit" edit-id)))
+
 (defn -main [consumer]
   (cond
     (= consumer "frequency") (do
                                 (future (start-consumer "frequency.queue" frequency-consumer))
-                                (future (start-consumer "compare.queue" compare-consumer)))
+                                (future (start-consumer "compare.queue" compare-consumer))
+                                (future (start-consumer "paragraph.queue" paragraph-consumer)))
     :else (println "No consumer by that name available")))

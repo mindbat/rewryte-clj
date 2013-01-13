@@ -42,3 +42,10 @@
   (let [queue-name "compare.queue"
         message (str account-id ":" doc-id)]
     (rabbit-publish queue-name message)))
+
+(defn queue-doc-freq
+  "Queue a document for frequency processing"
+  [account-id doc-id]
+  (let [queue-name "frequency.queue"
+        message (str account-id ":" doc-id)]
+    (rabbit-publish queue-name message)))
