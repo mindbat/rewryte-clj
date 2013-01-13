@@ -47,10 +47,10 @@
   [edit-doc]
   (let [edited-doc-id (edit-doc :edited_document_id)
         account-id (edit-doc :account_id)
-        edited-doc (get-document account-id edited-doc-id)
-        paragraphs (edited-doc :paragraphs)
-        edited-index (edited-doc :paragraph_number)
-        new-text (edited-doc :new_text)
+        original-doc (get-document account-id edited-doc-id)
+        paragraphs (original-doc :paragraphs)
+        edited-index (edit-doc :paragraph_number)
+        new-text (edit-doc :new_text)
         updated-paragraphs (assoc paragraphs edited-index new-text)
         updated-doc-text (clojure.string/join "\n\n" updated-paragraphs)
         doc-match {:account_id account-id :_id (ObjectId. edited-doc-id)}
