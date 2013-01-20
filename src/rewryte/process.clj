@@ -39,11 +39,6 @@
   [text]
   (map #(replace % #"[\n\r]" "") (split text #"(\n\n|\r\n\r)")))
 
-(defn paginate
-  "Split a string up into a vector of text pages"
-  [text]
-  (map #(join "\n\n" %) (split-n 10 (convert-to-paragraphs text))))
-
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
   [text]
