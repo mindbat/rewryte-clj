@@ -7,7 +7,7 @@
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
         mongo-doc (get-document account-id doc-id)
-        document (mongo-doc :document)
+        document (cleanup-text (mongo-doc :document))
         doc-name (mongo-doc :document_name)
         url-name (url-safe doc-name)
         frequencies (count-words document)
