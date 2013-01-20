@@ -37,12 +37,12 @@
 (defn cleanup-text
   "Prepare text for processing"
   [text]
-  (replace text #"\r" " "))
+  (replace text #"\r" ""))
 
 (defn convert-to-paragraphs
   "Convert a text into a sequence of paragraphs"
   [text]
-  (split text #"\n\n"))
+  (filter #(> (count %) 0) (split text #"\n\n+")))
 
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
