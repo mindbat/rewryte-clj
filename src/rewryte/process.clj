@@ -55,7 +55,7 @@
   (let [sentences (convert-to-sentences text)
         num-sentences (count sentences)
         total-words (count (convert-to-words text))]
-  (float (/ total-words num-sentences))))
+  (float (/ total-words (max 1 num-sentences)))))
 
 (defn avg-paragraph-length-words
   "Calculate the average paragraph length in words for the given text"
@@ -63,7 +63,7 @@
   (let [paragraphs (convert-to-paragraphs text)
         num-paragraphs (count paragraphs)
         total-words (count (convert-to-words text))]
-  (float (/ total-words num-paragraphs))))
+  (float (/ total-words (max 1 num-paragraphs)))))
 
 (defn avg-paragraph-length-sentences
   "Calculate the average paragraph length in sentences for the given text"
@@ -71,7 +71,7 @@
   (let [paragraphs (convert-to-paragraphs text)
         num-paragraphs (count paragraphs)
         total-sentences (count (convert-to-sentences text))]
-  (float (/ total-sentences num-paragraphs))))
+  (float (/ total-sentences (max 1 num-paragraphs)))))
 
 (defn sort-by-word-length
   "Sort the given sequence of strings according to the number of words in each string"
