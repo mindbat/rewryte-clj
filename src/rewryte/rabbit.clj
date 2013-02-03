@@ -18,7 +18,8 @@
   (let [connection (rmq/connect rewryte-broker)
         channel (lch/open connection)
         handler (fn [channel metadata ^bytes payload]
-                  (consumer-function (String. payload)))]
+                  (try (consumer-function (String. payload))
+                       (catch Exception ex (println (.getMessage ex)))))]
     (declare-queue channel queue-name)
     (lc/subscribe channel queue-name handler :auto-ack true)))
 
