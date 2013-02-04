@@ -1,5 +1,6 @@
 (ns rewryte.compare
-  (:use rewryte.mongo, clojure.string))
+  (:use rewryte.mongo)
+  (:require [clojure.string :as clj-str]))
 
 (defn length-range
   "Compute the max and min values allowed for the given length"

@@ -1,9 +1,10 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, clojure.string, cheshire.core))
+  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, cheshire.core)
+  (:require [clojure.string :as clj-str]))
 
 (defn frequency-consumer [message-body]
-  (let [split-body (split message-body #":")
+  (let [split-body (clj-str/split message-body #":")
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
         mongo-doc (get-document account-id doc-id)
@@ -25,7 +26,7 @@
     (queue-doc-compare account-id doc-id)))
 
 (defn compare-consumer [message-body]
-  (let [split-body (split message-body #":")
+  (let [split-body (clj-str/split message-body #":")
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
         mongo-doc (get-document account-id doc-id)

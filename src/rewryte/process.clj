@@ -1,10 +1,10 @@
 (ns rewryte.process
-  (:use clojure.string))
+  (:require [clojure.string :as clj-str]))
 
 (defn url-safe
   "Generate a url-safe version of the string"
   [text]
-  (replace (lower-case text) #"[^0-9a-zA-Z]" "_"))
+  (clj-str/replace (clj-str/lower-case text) #"[^0-9a-zA-Z]" "_"))
 
 (defn split-n
   "Split the given sequence into a vector of vectors made of every nth element of the original sequence.
@@ -22,7 +22,7 @@
 (defn convert-to-words
   "Convert a line into a sequence of words"
   [line]
-  (split (replace (lower-case line) #"[^ a-zA-Z0-9\n\r]+" "") #"\s+"))
+  (clj-str/split (clj-str/replace (clj-str/lower-case line) #"[^ a-zA-Z0-9\n\r]+" "") #"\s+"))
 
 (defn convert-to-keywords
   "Convert a line into a sequence of keywords"
@@ -37,12 +37,12 @@
 (defn cleanup-text
   "Prepare text for processing"
   [text]
-  (replace text #"\r" ""))
+  (clj-str/replace text #"\r" ""))
 
 (defn convert-to-paragraphs
   "Convert a text into a sequence of paragraphs"
   [text]
-  (filter #(> (count %) 0) (split text #"\n\n+")))
+  (filter #(> (count %) 0) (clj-str/split text #"\n\n+")))
 
 (defn convert-to-sentences
   "Convert the incoming text into a sequence of sentences"
@@ -115,31 +115,31 @@
   "Remove the articles from a given text"
   [text]
   (let [articles #"\s(the|a|an)\s"]
-    (replace text articles " ")))
+    (clj-str/replace text articles " ")))
 
 (defn remove-prepositions
   "Remove the prepositions from a given text"
   [text]
   (let [articles #"\s(of|on|in|to|from|with|for|by)\s"]
-    (replace text articles " ")))
+    (clj-str/replace text articles " ")))
 
 (defn remove-pronouns
   "Remove the pronouns from a given text"
   [text]
   (let [articles #"\s(he|she|it|i|you|your|we|our|my|them|they|us|his|her|him|hers|this|that|these|those|their|theirs)\s"]
-    (replace text articles " ")))
+    (clj-str/replace text articles " ")))
 
 (defn remove-conjunctions
   "Remove the conjunctions from a given text"
   [text]
   (let [articles #"\s(and|but|or)\s"]
-    (replace text articles " ")))
+    (clj-str/replace text articles " ")))
 
 (defn remove-fluff
   "Remove the small, common words from the text"
   [text]
   (-> text
-    (lower-case)
+    (clj-str/lower-case)
     (remove-articles)
     (remove-prepositions)
     (remove-pronouns)
