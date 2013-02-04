@@ -87,6 +87,30 @@
         sorted-sentences (sort-by-word-length indexed-sentences)]
     (take-last num-sentences sorted-sentences)))
 
+(defn adverb?
+  "Return true if the word given is an adverb"
+  [word]
+  (not (nil? (re-matches #"[a-z]+ly$" word))))
+
+(defn find-adverbs
+  "Find all the adverbs in the given text"
+  [text]
+  (let [words (convert-to-words text)]
+    (set (filter adverb? words))))
+
+(defn sort-by-adverb-number
+  "Sort a set of paragraphs by the number of adverbs they have"
+  [para-seq]
+  (sort-by #(count (last %)) para-seq))
+
+(defn find-most-adverbs
+  "Find the paragraphs with the most adverbs"
+  [text num-paragraphs]
+  (let [paragraphs (convert-to-paragraphs text)
+        indexed-paragraphs (map-indexed (fn [index item] (vector index (find-adverbs item))) paragraphs)
+        sorted-paragraphs (sort-by-adverb-number indexed-paragraphs)]
+    (take-last num-paragraphs sorted-paragraphs)))
+
 (defn remove-articles
   "Remove the articles from a given text"
   [text]
