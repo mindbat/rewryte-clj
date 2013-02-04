@@ -85,7 +85,7 @@
         sentences-by-paragraph (map convert-to-sentences paragraphs)
         indexed-sentences (partition 2 (flatten (map-indexed (fn [index item] (map #(vector % index) item)) sentences-by-paragraph)))
         sorted-sentences (sort-by-word-length indexed-sentences)]
-    (take-last num-sentences sorted-sentences)))
+    (reverse (take-last num-sentences sorted-sentences))))
 
 (defn adverb?
   "Return true if the word given is an adverb"
@@ -109,7 +109,7 @@
   (let [paragraphs (convert-to-paragraphs text)
         indexed-paragraphs (map-indexed (fn [index item] (vector index (find-adverbs item))) paragraphs)
         sorted-paragraphs (sort-by-adverb-number indexed-paragraphs)]
-    (take-last num-paragraphs sorted-paragraphs)))
+    (reverse (take-last num-paragraphs sorted-paragraphs))))
 
 (defn remove-articles
   "Remove the articles from a given text"
