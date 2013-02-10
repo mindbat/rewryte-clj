@@ -28,21 +28,9 @@
 
 (defn get-document
   "Fetch the given document from mongodb"
-  [account-id doc-id]
-  (let [doc-match {:account_id account-id :_id (ObjectId. doc-id)}]
-    (mcoll/find-one-as-map "account" doc-match)))
-
-(defn get-edit-doc
-  "Fetch the given edited paragraph document from mongodb"
-  [edit-id]
-  (let [doc-match {:_id (ObjectId. edit-id)}]
-    (mcoll/find-one-as-map "edit" doc-match)))
-
-(defn get-compare-doc
-  "Fetch the given comparison doc from mongodb"
-  [compare-id]
-  (let [doc-match {:_id (ObjectId. compare-id)}]
-    (mcoll/find-one-as-map "compare" doc-match)))
+  [collection doc-id]
+  (let [doc-match {:_id (ObjectId. doc-id)}]
+    (mcoll/find-one-as-map collection doc-match)))
 
 (defn search-collection
   "Execute the given search query against the given collection"

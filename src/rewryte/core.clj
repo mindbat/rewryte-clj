@@ -8,7 +8,7 @@
   (let [split-body (clj-str/split message-body #":")
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
-        mongo-doc (get-document account-id doc-id)
+        mongo-doc (get-document "account" doc-id)
         document (cleanup-text (mongo-doc :document))
         doc-name (mongo-doc :document_name)
         url-name (url-safe doc-name)
@@ -29,7 +29,7 @@
 
 (defn compare-consumer [message-body]
   (let [document-id message-body
-        compare-doc (get-compare-doc document-id)
+        compare-doc (get-document "compare" document-id)
         document (cleanup-text (compare-doc :document))
         frequencies (count-words document)
         results (vec (sort-by val > frequencies))
@@ -40,7 +40,7 @@
 
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body
-        edit-doc (get-edit-doc edit-id)
+        edit-doc (get-document "edit" edit-id)
         account-id (edit-doc :account_id)
         doc-id (edit-doc :edited_document_id)]
     (update-paragraph edit-doc)
