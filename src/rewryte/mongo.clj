@@ -28,9 +28,9 @@
 
 (defn get-document
   "Fetch the given document from mongodb"
-  [collection doc-id]
+  [coll-name doc-id]
   (let [doc-match {:_id (ObjectId. doc-id)}]
-    (mcoll/find-one-as-map collection doc-match)))
+    (mcoll/find-one-as-map coll-name doc-match)))
 
 (defn search-collection
   "Execute the given search query against the given collection"
