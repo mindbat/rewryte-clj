@@ -3,10 +3,6 @@
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
 
-(def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
-
-(mcore/connect-via-uri! mongo-host)
-
 (defn save-results
   "Save the given results to mongodb"
   [account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences sentence-length paragraph-length-words paragraph-length-sentences]

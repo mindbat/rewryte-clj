@@ -1,7 +1,8 @@
 (ns rewryte.core
   (:gen-class :main true)
   (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, cheshire.core)
-  (:require [clojure.string :as clj-str]))
+  (:require [clojure.string :as clj-str]
+            [monger.core :as mcore]))
 
 (defn frequency-consumer [message-body]
   (let [split-body (clj-str/split message-body #":")
@@ -44,10 +45,13 @@
     (queue-doc-freq account-id doc-id)
     (delete-doc "edit" edit-id)))
 
+(def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
+
 (defn -main [consumer]
   (cond
-    (= consumer "frequency") (do
-                                (future (start-consumer "frequency.queue" frequency-consumer))
-                                (future (start-consumer "compare.queue" compare-consumer))
-                                (future (start-consumer "paragraph.queue" paragraph-consumer)))
-    :else (println "No consumer by that name available")))
+   (= consumer "frequency") (do
+                              (mcore/connect-via-uri! mongo-host)
+                              (future (start-consumer "frequency.queue" frequency-consumer))
+                              (future (start-consumer "compare.queue" compare-consumer))
+                              (future (start-consumer "paragraph.queue" paragraph-consumer)))
+   :else (println "No consumer by that name available")))
