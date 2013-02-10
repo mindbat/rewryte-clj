@@ -20,10 +20,11 @@
         results-standard (vec (sort-by val > freq-standard))
         paragraphs (convert-to-paragraphs document)
         longest-sentences (find-longest-sentences document 5)
+        most-adverbs (find-most-adverbs document 5)
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences sentence-length paragraph-length-words paragraph-length-sentences)
+    (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences)
     (queue-doc-compare account-id doc-id)))
 
 (defn compare-consumer [message-body]
