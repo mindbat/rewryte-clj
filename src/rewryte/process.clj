@@ -96,7 +96,7 @@
   "Find all the adverbs in the given text"
   [text]
   (let [words (convert-to-words text)]
-    (set (filter adverb? words))))
+    (vec (filter adverb? words))))
 
 (defn sort-by-adverb-number
   "Sort a set of paragraphs by the number of adverbs they have"
