@@ -25,17 +25,18 @@
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
     (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences)
-    (queue-doc-compare account-id doc-id)))
+    (send-results-published account-id url-name)))
 
 (defn compare-consumer [message-body]
-  (let [split-body (clj-str/split message-body #":")
-        account-id (Integer/parseInt (first split-body))
-        doc-id (second split-body)
-        mongo-doc (get-document account-id doc-id)
-        url-name (mongo-doc :url_name)
-        score (compute-score mongo-doc "perfect.queue")]
-    (save-score account-id doc-id score)
-    (send-results-published account-id url-name)))
+  (let [document-id message-body
+        compare-doc (get-compare-doc document-id)
+        document (cleanup-text (compare-doc :document))
+        frequencies (count-words document)
+        results (vec (sort-by val > frequencies))
+        sentence-length (avg-sentence-length document)
+        paragraph-length-words (avg-paragraph-length-words document)
+        paragraph-length-sentences (avg-paragraph-length-sentences document)]
+    (save-compare-results document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences)))
 
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body

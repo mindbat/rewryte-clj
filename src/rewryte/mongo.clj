@@ -10,6 +10,22 @@
         doc-update {:frequencies frequencies :url_name url-name :results_full {:max_frequency max-frequency-full, :results results-full} :results_standard {:max_frequency max-frequency-standard, :results results-standard} :paragraphs paragraphs :longest_sentences longest-sentences :most_adverbs most-adverbs :sentence_length sentence-length :paragraph_length_words paragraph-length-words :paragraph_length_sentences paragraph-length-sentences}]
     (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
 
+(defn make-compare-doc
+  "Make a compare doc map for mongodb"
+  [freq results sentences para-words para-sentences]
+  {:frequencies freq
+   :results results
+   :sentence_length sentences
+   :paragraph_length_words para-words
+   :paragraph_length_sentences para-sentences})
+
+(defn save-compare-results
+  "Save the results of the comparison document processing to mongodb"
+  [document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences]
+  (let [doc-match {:_id (ObjectId. document-id)}
+        doc-update (make-compare-doc frequencies results sentence-length paragraph-length-words paragraph-length-sentences)]
+    (mcoll/update "compare" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+
 (defn get-document
   "Fetch the given document from mongodb"
   [account-id doc-id]
@@ -21,6 +37,12 @@
   [edit-id]
   (let [doc-match {:_id (ObjectId. edit-id)}]
     (mcoll/find-one-as-map "edit" doc-match)))
+
+(defn get-compare-doc
+  "Fetch the given comparison doc from mongodb"
+  [compare-id]
+  (let [doc-match {:_id (ObjectId. compare-id)}]
+    (mcoll/find-one-as-map "compare" doc-match)))
 
 (defn search-collection
   "Execute the given search query against the given collection"
