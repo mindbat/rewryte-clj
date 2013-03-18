@@ -37,16 +37,7 @@
   (let [queue-name (str account-id "-response.queue")]
     (rabbit-publish queue-name url-name)))
 
-(defn queue-doc-compare
-  "Queue a doc for comparison"
-  [account-id doc-id]
-  (let [queue-name "compare.queue"
-        message (str account-id ":" doc-id)]
-    (rabbit-publish queue-name message)))
-
-(defn queue-doc-freq
-  "Queue a document for frequency processing"
-  [account-id doc-id]
-  (let [queue-name "frequency.queue"
-        message (str account-id ":" doc-id)]
-    (rabbit-publish queue-name message)))
+(defn queue-doc
+  "Queue a document for further processing"
+  [queue-name account-id doc-id]
+  (rabbit-publish queue-name (str account-id ":" doc-id)))

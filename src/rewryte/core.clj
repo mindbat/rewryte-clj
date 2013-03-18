@@ -44,7 +44,7 @@
         account-id (edit-doc :account_id)
         doc-id (edit-doc :edited_document_id)]
     (update-paragraph edit-doc)
-    (queue-doc-freq account-id doc-id)
+    (queue-doc "frequency.queue" account-id doc-id)
     (delete-doc "edit" edit-id)))
 
 (def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
