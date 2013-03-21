@@ -1,8 +1,7 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, rewryte.consumer, cheshire.core)
-  (:require [clojure.string :as clj-str]
-            [monger.core :as mcore]))
+  (:use rewryte.rabbit, rewryte.process, rewryte.mongo, rewryte.compare, rewryte.consumer)
+  (:require [monger.core :as mcore]))
 
 (def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
 
