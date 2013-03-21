@@ -25,6 +25,12 @@
     (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences)
     (send-results-published account-id url-name)))
 
+(defn parse-message
+  "Parse an incoming message from rabbit-mq"
+  [message-body]
+  (let [split-body (clj-str/split message-body #":")]
+    {:account_id (first split-body) :doc_id (second split-body)}))
+
 (comment
   (defn frequency-consumer
     "Process incoming messages from the frequency queue"
@@ -35,6 +41,7 @@
         calculate-stats
         calculate-edits
         add-url-name
+        add-paragraphs
         (save-document "account")
         publish-results)))
 
