@@ -1,4 +1,5 @@
-(ns rewryte.stats)
+(ns rewryte.stats
+  (:use rewryte.process))
 
 (defn clean-document
   "Cleanup the special characters in the document"

@@ -1,8 +1,8 @@
 (ns rewryte.consumer
-  (:use rewryte.process, rewryte.mongo, rewryte.rabbit)
+  (:use rewryte.process, rewryte.mongo, rewryte.rabbit, rewryte.edits, rewryte.stats)
   (:require [clojure.string :as clj-str]))
 
-(defn frequency-consumer [message-body]
+(comment (defn frequency-consumer [message-body]
   (let [split-body (clj-str/split message-body #":")
         account-id (Integer/parseInt (first split-body))
         doc-id (second split-body)
@@ -23,7 +23,7 @@
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
     (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences)
-    (send-results-published account-id url-name)))
+    (send-results-published account-id url-name))))
 
 (defn parse-message
   "Parse an incoming message from rabbit-mq"
@@ -36,18 +36,17 @@
   [doc-map]
   (assoc doc-map :url_name (url-safe (:document_name doc-map))))
 
-(comment
-  (defn frequency-consumer
-    "Process incoming messages from the frequency queue"
-    [message-body]
-    (-> message-body
-        parse-message
-        (get-document "account")
-        calculate-stats
-        calculate-edits
-        add-url-name
-        (save-document "account")
-        publish-results)))
+(defn frequency-consumer
+  "Process incoming messages from the frequency queue"
+  [message-body]
+  (-> message-body
+      parse-message
+      (get-document "account")
+      calculate-stats
+      calculate-edits
+      add-url-name
+      (save-document "account")
+      publish-results))
 
 (defn compare-consumer [message-body]
   (let [document-id message-body
