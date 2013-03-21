@@ -31,6 +31,11 @@
   (let [split-body (clj-str/split message-body #":")]
     {:account_id (first split-body) :doc_id (second split-body)}))
 
+(defn add-url-name
+  "Add the url name for the document"
+  [doc-map]
+  (assoc doc-map :url_name (url-safe (:document_name doc-map))))
+
 (comment
   (defn frequency-consumer
     "Process incoming messages from the frequency queue"
@@ -41,7 +46,6 @@
         calculate-stats
         calculate-edits
         add-url-name
-        add-paragraphs
         (save-document "account")
         publish-results)))
 
