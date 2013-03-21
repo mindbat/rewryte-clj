@@ -3,6 +3,13 @@
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
 
+(defn save-document
+  "Save the given document to the db"
+  [coll-name doc-map]
+  (let [doc-match {:account_id (:account_id doc-map) :_id (:_id doc-map)}
+        doc-update (dissoc doc-map :account_id :_id :document :document_name)]
+    (mcoll/update coll-name doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+
 (defn save-results
   "Save the given results to mongodb"
   [account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences]
