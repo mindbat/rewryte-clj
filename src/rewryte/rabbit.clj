@@ -31,6 +31,11 @@
     (declare-queue channel queue-name)
     (lb/publish channel "" queue-name content :content-type "text/plain")))
 
+(defn publish-results
+  "Notify any listeners that the document results are ready"
+  [{:keys [account_id url_name] :as doc-map}]
+  (rabbit-publish (str account_id "-response.queue") url_name))
+
 (defn send-results-published
   "Notify rabbitmq that the account results are ready"
   [account-id url-name]
