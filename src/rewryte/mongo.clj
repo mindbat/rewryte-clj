@@ -58,7 +58,7 @@
   [edit-doc]
   (let [edited-doc-id (edit-doc :edited_document_id)
         account-id (edit-doc :account_id)
-        original-doc (get-document "account" edited-doc-id)
+        original-doc (get-document "account" {:doc_id edited-doc-id})
         paragraphs (original-doc :paragraphs)
         edited-index (edit-doc :paragraph_number)
         new-text (edit-doc :new_text)
