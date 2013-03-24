@@ -8,7 +8,8 @@
   [coll-name doc-map]
   (let [doc-match {:account_id (:account_id doc-map) :_id (:_id doc-map)}
         doc-update (dissoc doc-map :account_id :_id :document :document_name)]
-    (mcoll/update coll-name doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+    (mcoll/update coll-name doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)
+    doc-map))
 
 (defn save-results
   "Save the given results to mongodb"

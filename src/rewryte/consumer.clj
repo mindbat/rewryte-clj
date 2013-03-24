@@ -39,7 +39,7 @@
 (defn frequency-consumer
   "Process incoming messages from the frequency queue"
   [message-body]
-  (-> message-body
+  (->> message-body
       parse-message
       (get-document "account")
       calculate-stats
@@ -59,11 +59,10 @@
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
     (save-compare-results document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences))))
 
-
 (defn compare-consumer
   "Process incoming messages from the compare queue"
   [message-body]
-  (-> message-body
+  (->> message-body
       parse-message
       (get-document "compare")
       calculate-stats
@@ -71,18 +70,17 @@
 
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body
-        edit-doc (get-document "edit" edit-id)
+        edit-doc (get-document "edit" {:doc_id edit-id})
         account-id (edit-doc :account_id)
         doc-id (edit-doc :edited_document_id)]
     (update-paragraph edit-doc)
     (queue-doc "frequency.queue" account-id doc-id)
     (delete-doc "edit" edit-id)))
 
-(comment
-  (defn paragraph-consumer
+(comment (defn paragraph-consumer
     "Process incoming messages from the paragraph queue"
     [message-body]
-    (-> message-body
+    (->> message-body
         parse-message
         (get-document "edit")
         update-paragraph
