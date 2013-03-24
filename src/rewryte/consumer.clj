@@ -48,7 +48,7 @@
       (save-document "account")
       publish-results))
 
-(defn compare-consumer [message-body]
+(comment (defn compare-consumer [message-body]
   (let [document-id message-body
         compare-doc (get-document "compare" document-id)
         document (cleanup-text (compare-doc :document))
@@ -57,17 +57,17 @@
         sentence-length (avg-sentence-length document)
         paragraph-length-words (avg-paragraph-length-words document)
         paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-compare-results document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences)))
+    (save-compare-results document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences))))
 
-(comment
-  (defn compare-consumer
-    "Process incoming messages from the compare queue"
-    [message-body]
-    (-> message-body
-        parse-message
-        (get-document "compare")
-        calculate-stats
-        (save-document "compare"))))
+
+(defn compare-consumer
+  "Process incoming messages from the compare queue"
+  [message-body]
+  (-> message-body
+      parse-message
+      (get-document "compare")
+      calculate-stats
+      (save-document "compare")))
 
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body
