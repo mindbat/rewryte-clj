@@ -1,4 +1,4 @@
-(ns rewryte.process
+(ns rewryte.calc.core
   (:require [clojure.string :as clj-str]))
 
 (defn url-safe

@@ -1,5 +1,5 @@
-(ns rewryte.edits
-  (:use rewryte.process))
+(ns rewryte.calc.edits
+  (:use rewryte.calc.core))
 
 (defn add-paragraphs
   "Add a version of the document that's been converted to paragraphs"
