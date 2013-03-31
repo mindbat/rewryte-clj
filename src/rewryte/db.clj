@@ -1,4 +1,4 @@
-(ns rewryte.mongo
+(ns rewryte.db
   (:require [monger.core :as mcore]
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))

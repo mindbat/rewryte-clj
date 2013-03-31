@@ -1,4 +1,5 @@
 (ns rewryte.compare
+  (:use rewryte.db)
   (:require [clojure.string :as clj-str]))
 
 (defn length-range
