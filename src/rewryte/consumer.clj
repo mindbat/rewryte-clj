@@ -1,29 +1,6 @@
 (ns rewryte.consumer
-  (:use rewryte.process, rewryte.mongo, rewryte.rabbit, rewryte.edits, rewryte.stats)
+  (:use rewryte.process, rewryte.db, rewryte.rabbit, rewryte.edits, rewryte.stats)
   (:require [clojure.string :as clj-str]))
-
-(comment (defn frequency-consumer [message-body]
-  (let [split-body (clj-str/split message-body #":")
-        account-id (Integer/parseInt (first split-body))
-        doc-id (second split-body)
-        mongo-doc (get-document "account" doc-id)
-        document (cleanup-text (mongo-doc :document))
-        doc-name (mongo-doc :document_name)
-        url-name (url-safe doc-name)
-        frequencies (count-words document)
-        freq-standard (count-words (remove-fluff document))
-        max-frequency-full (apply max (vals frequencies))
-        results-full (vec (sort-by val > frequencies))
-        max-frequency-standard (apply max (vals freq-standard))
-        results-standard (vec (sort-by val > freq-standard))
-        paragraphs (convert-to-paragraphs document)
-        longest-sentences (find-longest-sentences document 5)
-        most-adverbs (find-most-adverbs document 5)
-        sentence-length (avg-sentence-length document)
-        paragraph-length-words (avg-paragraph-length-words document)
-        paragraph-length-sentences (avg-paragraph-length-sentences document)]
-    (save-results account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences)
-    (send-results-published account-id url-name))))
 
 (defn parse-message
   "Parse an incoming message from rabbit-mq"
