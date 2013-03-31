@@ -1,7 +1,6 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use rewryte.message, rewryte.process, rewryte.db, rewryte.compare, rewryte.consumer)
-  (:require [monger.core :as mcore]))
+  (:use rewryte.message, rewryte.db, rewryte.consumer))
 
 (defn -main [consumer]
   (cond

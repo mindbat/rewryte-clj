@@ -1,5 +1,5 @@
 (ns rewryte.consumer
-  (:use rewryte.process, rewryte.db, rewryte.message, rewryte.edits, rewryte.stats)
+  (:use rewryte.calc.stats, rewryte.calc.edits, rewryte.db, rewryte.message)
   (:require [clojure.string :as clj-str]))
 
 (defn parse-message
