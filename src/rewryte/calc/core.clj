@@ -1,4 +1,5 @@
 (ns rewryte.calc.core
+  (:use opennlp.nlp)
   (:require [clojure.string :as clj-str]))
 
 (defn split-n
@@ -34,10 +35,7 @@
   [text]
   (filter #(> (count %) 0) (clj-str/split text #"\n\n+")))
 
-(defn convert-to-sentences
-  "Convert the incoming text into a sequence of sentences"
-  [text]
-  (map first (re-seq #"(\")?(\w+[-/<>*&%$#@()+=\[\]{}~ ;,':\n]+)+(\w+[.?!])(\")?" text)))
+(def convert-to-sentences (make-sentence-detector "models/en-sent.bin"))
 
 (defn adverb?
   "Return true if the word given is an adverb"
