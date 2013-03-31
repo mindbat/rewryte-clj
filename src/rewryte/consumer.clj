@@ -1,9 +1,9 @@
 (ns rewryte.consumer
-  (:use rewryte.process, rewryte.db, rewryte.rabbit, rewryte.edits, rewryte.stats)
+  (:use rewryte.process, rewryte.db, rewryte.message, rewryte.edits, rewryte.stats)
   (:require [clojure.string :as clj-str]))
 
 (defn parse-message
-  "Parse an incoming message from rabbit-mq"
+  "Parse an incoming message"
   [message-body]
   (let [split-body (clj-str/split message-body #":")]
     {:account_id (first split-body) :doc_id (second split-body)}))

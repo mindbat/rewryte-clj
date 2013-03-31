@@ -1,4 +1,4 @@
-(ns rewryte.rabbit
+(ns rewryte.message
   (:require [langohr.core :as rmq]
             [langohr.channel :as lch]
             [langohr.queue :as lq]
