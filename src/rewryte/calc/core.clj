@@ -1,11 +1,6 @@
 (ns rewryte.calc.core
   (:require [clojure.string :as clj-str]))
 
-(defn url-safe
-  "Generate a url-safe version of the string"
-  [text]
-  (clj-str/replace (clj-str/lower-case text) #"[^0-9a-zA-Z]" "_"))
-
 (defn split-n
   "Split the given sequence into a vector of vectors made of every nth element of the original sequence.
    Ex:
@@ -29,11 +24,6 @@
   [line]
   (map keyword (convert-to-words line)))
 
-(defn count-words
-  "Count the number of words in a string"
-  [incoming]
-  (frequencies (convert-to-keywords incoming)))
-
 (defn cleanup-text
   "Prepare text for processing"
   [text]
@@ -49,44 +39,6 @@
   [text]
   (map first (re-seq #"(\")?(\w+[-/<>*&%$#@()+=\[\]{}~ ;,':\n]+)+(\w+[.?!])(\")?" text)))
 
-(defn avg-sentence-length
-  "Calculate the average sentence length in words for the given text"
-  [text]
-  (let [sentences (convert-to-sentences text)
-        num-sentences (count sentences)
-        total-words (count (convert-to-words text))]
-  (float (/ total-words (max 1 num-sentences)))))
-
-(defn avg-paragraph-length-words
-  "Calculate the average paragraph length in words for the given text"
-  [text]
-  (let [paragraphs (convert-to-paragraphs text)
-        num-paragraphs (count paragraphs)
-        total-words (count (convert-to-words text))]
-  (float (/ total-words (max 1 num-paragraphs)))))
-
-(defn avg-paragraph-length-sentences
-  "Calculate the average paragraph length in sentences for the given text"
-  [text]
-  (let [paragraphs (convert-to-paragraphs text)
-        num-paragraphs (count paragraphs)
-        total-sentences (count (convert-to-sentences text))]
-  (float (/ total-sentences (max 1 num-paragraphs)))))
-
-(defn sort-by-word-length
-  "Sort the given sequence of strings according to the number of words in each string"
-  [string-seq]
-  (sort-by #(count (convert-to-words (first %))) string-seq))
-
-(defn find-longest-sentences
-  "Find the X longest sentences in the document"
-  [text num-sentences]
-  (let [paragraphs (convert-to-paragraphs text)
-        sentences-by-paragraph (map convert-to-sentences paragraphs)
-        indexed-sentences (partition 2 (flatten (map-indexed (fn [index item] (map #(vector % index) item)) sentences-by-paragraph)))
-        sorted-sentences (sort-by-word-length indexed-sentences)]
-    (reverse (take-last num-sentences sorted-sentences))))
-
 (defn adverb?
   "Return true if the word given is an adverb"
   [word]
@@ -97,19 +49,6 @@
   [text]
   (let [words (convert-to-words text)]
     (vec (filter adverb? words))))
-
-(defn sort-by-adverb-number
-  "Sort a set of paragraphs by the number of adverbs they have"
-  [para-seq]
-  (sort-by #(count (last %)) para-seq))
-
-(defn find-most-adverbs
-  "Find the paragraphs with the most adverbs"
-  [text num-paragraphs]
-  (let [paragraphs (convert-to-paragraphs text)
-        indexed-paragraphs (map-indexed (fn [index item] (vector index (find-adverbs item))) paragraphs)
-        sorted-paragraphs (sort-by-adverb-number indexed-paragraphs)]
-    (reverse (take-last num-paragraphs sorted-paragraphs))))
 
 (defn remove-articles
   "Remove the articles from a given text"
