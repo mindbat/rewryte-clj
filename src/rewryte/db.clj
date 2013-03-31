@@ -3,6 +3,13 @@
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
 
+(def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
+
+(defn connect-to-doc-db!
+  "Connect to the database holding documents for processing"
+  []
+  (mcore/connect-via-uri! mongo-host))
+
 (defn save-document
   "Save the given document to the db"
   [coll-name doc-map]
