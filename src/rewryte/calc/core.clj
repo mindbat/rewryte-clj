@@ -1,6 +1,12 @@
 (ns rewryte.calc.core
-  (:use opennlp.nlp)
+  (:use opennlp.nlp, opennlp.tools.filters)
   (:require [clojure.string :as clj-str]))
+
+(pos-filter adverbs #"^RB")
+
+(def pos-tag (make-pos-tagger "models/en-pos-maxent.bin"))
+
+(def tokenize (make-tokenizer "models/en-token.bin"))
 
 (defn split-n
   "Split the given sequence into a vector of vectors made of every nth element of the original sequence.
@@ -45,8 +51,12 @@
 (defn find-adverbs
   "Find all the adverbs in the given text"
   [text]
-  (let [words (convert-to-words text)]
-    (vec (filter adverb? words))))
+  (->> text
+       tokenize
+       pos-tag
+       adverbs
+       (map first)
+       vec))
 
 (defn remove-articles
   "Remove the articles from a given text"
