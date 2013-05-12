@@ -1,7 +1,7 @@
 (ns rewryte.calc.bayes)
 
 (defn extract-features
-  "Given a set of map of feature functions and labels, calculate the values for the given document"
+  "Given a set of feature functions and labels, calculate the values for the given document"
   [feature-functions document]
   (map #(hash-map (first %) ((last %) document)) feature-functions))
 
@@ -28,11 +28,21 @@
 
 (defn train
   "Given a set of feature functions and pre-classfied documents, calculate:
-   1) The percentage of documents that have each classification
-   2) The percentage of documents in each classification that have a given value for a given feature
-   3) The percentage of all documents that have a given value for a given feature
+   1) The number of documents that have each classification
+   2) The number of documents in each classification that have a given value for a given feature
+   3) The number of all documents that have a given value for a given feature
    4) The total number of documents"
   [feature-functions classified-docs]
   (->> classified-docs
        (map #(vector (:label %) (extract-features feature-functions (:text %))))
        (reduce increment-distributions initial-train-map)))
+
+(defn classify
+  "Given a document, a set of feature functions and a map of feature distributions, calculate the most likely category for a document"
+  [document feature-functions trained-map]
+  )
+
+(defn classifier
+  "Given a set of feature functions and classified documents, create a function that can classify new documents"
+  [feature-functions classified-docs]
+  (fn [document] (classify document feature-functions (train feature-functions classified-docs))))
