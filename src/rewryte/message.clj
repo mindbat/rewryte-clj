@@ -5,7 +5,7 @@
             [langohr.basic :as lb]
             [langohr.consumers :as lc]))
 
-(def rewryte-broker {:uri (get (System/getenv) "CLOUDAMQP_URL" "amqp://guest:guest@127.0.0.1")})
+(def rewryte-broker {:uri (get (System/getenv) "RABBITMQ_URL" "amqp://guest:guest@127.0.0.1")})
 
 (defn declare-queue
   "Declare a new rabbit-mq queue"
