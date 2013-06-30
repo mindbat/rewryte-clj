@@ -40,6 +40,11 @@
   [doc-map]
   (assoc doc-map :frequencies (count-words (:document doc-map))))
 
+(defn add-long-word-freq
+  "Add histogram of words longer than 7 characters to the document map"
+  [doc-map]
+  (assoc doc-map :long-frequencies (frequencies (map keyword (filter long? (convert-to-words (:document doc-map)))))))
+
 (defn add-full-results
   "Add max word frequency and sorted word frequencies to the doc map"
   [doc-map]
@@ -77,6 +82,7 @@
   (-> document
       clean-document
       add-word-freq
+      add-long-word-freq
       add-full-results
       add-standard-results
       add-avg-sentence-length
