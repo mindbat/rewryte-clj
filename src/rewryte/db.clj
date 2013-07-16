@@ -31,22 +31,6 @@
         doc-update {:frequencies frequencies :url_name url-name :results_full {:max_frequency max-frequency-full, :results results-full} :results_standard {:max_frequency max-frequency-standard, :results results-standard} :paragraphs paragraphs :longest_sentences longest-sentences :most_adverbs most-adverbs :sentence_length sentence-length :paragraph_length_words paragraph-length-words :paragraph_length_sentences paragraph-length-sentences}]
     (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
 
-(defn make-compare-doc
-  "Make a compare doc map for mongodb"
-  [freq results sentences para-words para-sentences]
-  {:frequencies freq
-   :results results
-   :sentence_length sentences
-   :paragraph_length_words para-words
-   :paragraph_length_sentences para-sentences})
-
-(defn save-compare-results
-  "Save the results of the comparison document processing to mongodb"
-  [document-id frequencies results sentence-length paragraph-length-words paragraph-length-sentences]
-  (let [doc-match {:_id (ObjectId. document-id)}
-        doc-update (make-compare-doc frequencies results sentence-length paragraph-length-words paragraph-length-sentences)]
-    (mcoll/update "compare" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
-
 (defn get-document
   "Fetch the given document from mongodb"
   [coll-name doc-map]
@@ -58,13 +42,6 @@
   [query collection]
   (let [mongo-db (mcore/get-db "docs")]
     (mcoll/find-maps collection query)))
-
-(defn save-score
-  "Save the doc score to mongodb"
-  [account-id doc-id score]
-  (let [doc-match {:account_id account-id :_id (ObjectId. doc-id)}
-        doc-update {:score score}]
-    (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
 
 (defn update-paragraph
   "Update the paragraph text for a given mongo document"

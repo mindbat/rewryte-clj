@@ -38,15 +38,6 @@
        (get-document "genre")
        update-genre-training-data))
 
-(defn compare-consumer
-  "Process incoming messages from the compare queue"
-  [message-body]
-  (->> message-body
-      parse-message
-      (get-document "compare")
-      calculate-stats
-      (update-document "compare")))
-
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body
         edit-doc (get-document "edit" {:doc_id edit-id})
