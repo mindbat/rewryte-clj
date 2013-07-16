@@ -38,6 +38,13 @@
        (map #(vector (:label %) (extract-features feature-functions (:text %))))
        (reduce increment-distributions initial-train-map)))
 
+(defn update-trained-map
+  "Given a set of additional classified documents, add their data to the trained map"
+  [feature-functions classified-docs trained-map]
+  (->> classified-docs
+       (map #(vector (:label %) (extract-features feature-functions (:text %))))
+       (reduce increment-distributions trained-map)))
+
 (defn get-max-key
   "Given a map of keys and numerical values, get the key with the maximum value"
   [max-map]

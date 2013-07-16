@@ -1,4 +1,5 @@
 (ns rewryte.db
+  (:use rewryte.calc.bayes)
   (:require [monger.core :as mcore]
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
@@ -10,7 +11,12 @@
   []
   (mcore/connect-via-uri! mongo-host))
 
-(defn save-document
+(defn create-document
+  "Create a new document in mongo db"
+  [collection document]
+  (mcoll/insert-and-return collection document))
+
+(defn update-document
   "Save the given document to the db"
   [coll-name doc-map]
   (let [doc-match {:account_id (:account_id doc-map) :_id (:_id doc-map)}

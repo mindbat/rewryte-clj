@@ -11,6 +11,11 @@
   [incoming]
   (frequencies (convert-to-keywords incoming)))
 
+(defn count-long-words
+  "Count the number of long words in a string"
+  [incoming]
+  (frequencies (map keyword (filter long? (convert-to-words incoming)))))
+
 (defn avg-sentence-length
   "Calculate the average sentence length in words for the given text"
   [text]
@@ -43,7 +48,7 @@
 (defn add-long-word-freq
   "Add histogram of words longer than 7 characters to the document map"
   [doc-map]
-  (assoc doc-map :long-frequencies (frequencies (map keyword (filter long? (convert-to-words (:document doc-map)))))))
+  (assoc doc-map :long_frequencies (frequencies (map keyword (filter long? (convert-to-words (:document doc-map)))))))
 
 (defn add-full-results
   "Add max word frequency and sorted word frequencies to the doc map"
@@ -88,3 +93,12 @@
       add-avg-sentence-length
       add-para-length-words
       add-para-length-sentences))
+
+(defn calculate-genre-stats
+  "Calculate the stats we need to assign a genre to this document"
+  [document]
+  (-> document
+      clean-document
+      add-long-word-freq
+      add-avg-sentence-length
+      add-para-length-words))

@@ -1,5 +1,5 @@
 (ns rewryte.consumer
-  (:use rewryte.calc.stats, rewryte.calc.edits, rewryte.db, rewryte.message)
+  (:use rewryte.calc.stats, rewryte.calc.edits, rewryte.genre, rewryte.db, rewryte.message)
   (:require [clojure.string :as clj-str]))
 
 (defn parse-message
@@ -27,8 +27,16 @@
       calculate-stats
       calculate-edits
       add-url-name
-      (save-document "account")
+      (update-document "account")
       publish-results))
+
+(defn genre-train-consumer
+  "Process incoming messages from the genre-training queue"
+  [message-body]
+  (->> message-body
+       parse-message
+       (get-document "genre")
+       update-genre-training-data))
 
 (defn compare-consumer
   "Process incoming messages from the compare queue"
@@ -37,7 +45,7 @@
       parse-message
       (get-document "compare")
       calculate-stats
-      (save-document "compare")))
+      (update-document "compare")))
 
 (defn paragraph-consumer [message-body]
   (let [edit-id message-body
