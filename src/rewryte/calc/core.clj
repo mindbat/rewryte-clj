@@ -34,7 +34,7 @@
 (defn long?
   "Test if the given word is long"
   [word]
-  (> count(word) 7))
+  (> (count word) 7))
 
 (defn cleanup-text
   "Prepare text for processing"
