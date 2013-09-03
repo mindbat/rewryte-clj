@@ -1,5 +1,5 @@
 (ns rewryte.utils
-  (:use clojure.java.io, rewryte.db))
+  (:use clojure.java.io, rewryte.db, rewryte.message))
 
 (defn find-text-files
   "Given a directory name, find all the text files in the directory"
@@ -16,8 +16,13 @@
   [classifier-name training-doc]
   (create-document classifier-name training-doc))
 
+(defn queue-training-doc
+  "Put a document into the genre training queue"
+  [document]
+  (queue-doc "genre_train.queue" 1 (document :_id)))
+
 (defn upload-genre-docs
   "Given a directory and a genre, upload all the documents in that directory to the genre training queue"
   [directory genre]
   (connect-to-doc-db!)
-  (dorun (map #(save-training-document "genre" %) (map #(convert-file-to-classified-doc genre %) (find-text-files directory)))))
+  (dorun (map queue-training-doc (map #(save-training-document "genre" %) (map #(convert-file-to-classified-doc genre %) (find-text-files directory))))))
