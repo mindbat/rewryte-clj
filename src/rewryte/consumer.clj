@@ -18,6 +18,11 @@
   [doc-map]
   (assoc doc-map :url_name (url-safe (:document_name doc-map))))
 
+(defn realize-map
+  "Given a hash-map with unrealized values, realize all values"
+  [future-map]
+  (reduce #(assoc %1 (first %2) @(second %2)) future-map (filter #(future? (second %)) future-map)))
+
 (defn frequency-consumer
   "Process incoming messages from the frequency queue"
   [message-body]
@@ -27,6 +32,7 @@
       calculate-stats
       calculate-edits
       add-url-name
+      realize-map
       (save-document "account")
       publish-results))
 
