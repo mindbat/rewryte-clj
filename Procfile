@@ -1,3 +1,3 @@
 worker: lein run -m rewryte.core frequency
-compareworker: lein run -m rewryte.core compare
+genreworker: lein run -m rewryte.core genre
 paraworker: lein run -m rewryte.core paragraph
