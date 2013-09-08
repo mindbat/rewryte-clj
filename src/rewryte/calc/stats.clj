@@ -22,7 +22,7 @@
   (let [sentences (convert-to-sentences text)
         num-sentences (count sentences)
         total-words (count (convert-to-words text))]
-    (float (/ total-words (max 1 num-sentences)))))
+    (int (/ total-words (max 1 num-sentences)))))
 
 (defn avg-paragraph-length-words
   "Calculate the average paragraph length in words for the given text"
@@ -30,7 +30,7 @@
   (let [paragraphs (convert-to-paragraphs text)
         num-paragraphs (count paragraphs)
         total-words (count (convert-to-words text))]
-    (float (/ total-words (max 1 num-paragraphs)))))
+    (int (/ total-words (max 1 num-paragraphs)))))
 
 (defn avg-paragraph-length-sentences
   "Calculate the average paragraph length in sentences for the given text"
@@ -38,7 +38,7 @@
   (let [paragraphs (convert-to-paragraphs text)
         num-paragraphs (count paragraphs)
         total-sentences (count (convert-to-sentences text))]
-    (float (/ total-sentences (max 1 num-paragraphs)))))
+    (int (/ total-sentences (max 1 num-paragraphs)))))
 
 (defn add-word-freq
   "Add word frequencies to the document map"
