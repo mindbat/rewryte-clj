@@ -1,5 +1,5 @@
 (ns rewryte.db
-  (:use rewryte.calc.bayes)
+  (:use rewryte.calc.bayes, monger.operators)
   (:require [monger.core :as mcore]
             [monger.collection :as mcoll])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
@@ -19,9 +19,9 @@
 (defn update-document
   "Save the given document to the db"
   [coll-name doc-map]
-  (let [doc-match (str (:_id doc-map))
+  (let [doc-match {:_id (:_id doc-map)}
         doc-update (dissoc doc-map :account_id :_id :document :document_name)]
-    (mcoll/update-by-id coll-name doc-match doc-update :write-concern WriteConcern/JOURNAL_SAFE)
+    (mcoll/update coll-name doc-match {$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)
     doc-map))
 
 (defn save-results
