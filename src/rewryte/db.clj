@@ -19,7 +19,7 @@
 (defn update-document
   "Save the given document to the db"
   [coll-name doc-map]
-  (let [doc-match (:_id doc-map)
+  (let [doc-match (str (:_id doc-map))
         doc-update (dissoc doc-map :account_id :_id :document :document_name)]
     (mcoll/update-by-id coll-name doc-match doc-update :write-concern WriteConcern/JOURNAL_SAFE)
     doc-map))
