@@ -1,4 +1,4 @@
 #!/bin/bash
 
-lein run -m rewryte.core frequency &
-lein run -m rewryte.core paragraph &
+lein trampoline run -m rewryte.core frequency &
+lein trampoline run -m rewryte.core paragraph &
