@@ -13,4 +13,7 @@
    (= consumer "paragraph") (do
                               (connect-to-doc-db!)
                               (start-consumer "paragraph.queue" paragraph-consumer))
+   (= consumer "extract") (do
+                              (connect-to-doc-db!)
+                              (start-consumer "extract.queue" extract-consumer))
    :else (println "No consumer by that name available")))

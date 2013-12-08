@@ -53,6 +53,12 @@
     (queue-doc "frequency.queue" account-id doc-id)
     (delete-doc "edit" edit-id)))
 
+(defn extract-consumer [[s3-id account-id]]
+  (->> (fetch-s3-document s3-id)
+      extract-text
+      (save-new-document account-id)
+      (queue-doc "frequency.queue" account-id)))
+
 (comment (defn paragraph-consumer
     "Process incoming messages from the paragraph queue"
     [message-body]
