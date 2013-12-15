@@ -1,6 +1,11 @@
 (ns rewryte.core
   (:gen-class :main true)
-  (:use rewryte.message, rewryte.db, rewryte.consumer))
+  (:require [rewryte.consumer :refer [extract-consumer
+                                      frequency-consumer
+                                      genre-train-consumer
+                                      paragraph-consumer]]
+            [rewryte.db :refer [connect-to-doc-db!]]
+            [rewryte.message :refer [start-consumer]]))
 
 (defn -main [consumer]
   (cond

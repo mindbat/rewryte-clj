@@ -1,5 +1,12 @@
 (ns rewryte.genre
-  (:use rewryte.calc.bayes, rewryte.calc.stats, rewryte.db))
+  (:require [rewryte.db :refer [create-document
+                                search-collection
+                                update-document]]
+            [rewryte.calc.bayes :refer [initial-train-map
+                                        update-trained-map]]
+            [rewryte.calc.stats :refer [avg-paragraph-length-words
+                                        avg-sentence-length
+                                        count-long-words]]))
 
 (def genre-features {:word-freq count-long-words
                      :sentence-length avg-sentence-length

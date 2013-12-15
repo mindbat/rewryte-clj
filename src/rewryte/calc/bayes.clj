@@ -1,5 +1,5 @@
 (ns rewryte.calc.bayes
-  (:use clojure.set))
+  (:require [clojure.set :refer [map-invert]]))
 
 (defn extract-features
   "Given a map of feature functions and labels, calculate the values for the given document"

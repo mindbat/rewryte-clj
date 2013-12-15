@@ -1,5 +1,8 @@
 (ns rewryte.calc.edits
-  (:use rewryte.calc.core))
+  (:require [rewryte.calc.core :refer [convert-to-paragraphs
+                                       convert-to-sentences
+                                       convert-to-words
+                                       find-adverbs]]))
 
 (defn sort-by-word-length
   "Sort the given sequence of strings according to the number of words in each string"

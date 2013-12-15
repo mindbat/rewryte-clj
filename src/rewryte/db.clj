@@ -1,7 +1,7 @@
 (ns rewryte.db
-  (:use rewryte.calc.bayes, monger.operators)
   (:require [monger.core :as mcore]
-            [monger.collection :as mcoll])
+            [monger.collection :as mcoll]
+            [monger.operators :refer [$set]])
   (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
 
 (def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))

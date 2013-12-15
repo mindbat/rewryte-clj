@@ -1,5 +1,11 @@
 (ns rewryte.calc.stats
-  (:use rewryte.calc.core))
+  (:require [rewryte.calc.core :refer [cleanup-text
+                                       convert-to-keywords
+                                       convert-to-paragraphs
+                                       convert-to-sentences
+                                       convert-to-words
+                                       long?
+                                       remove-fluff]]))
 
 (defn clean-document
   "Cleanup the special characters in the document"

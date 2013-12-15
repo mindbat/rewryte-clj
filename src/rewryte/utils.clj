@@ -1,5 +1,8 @@
 (ns rewryte.utils
-  (:use clojure.java.io, rewryte.db, rewryte.message))
+  (:require [clojure.java.io :refer [file]]
+            [rewryte.db :refer [connect-to-doc-db!
+                                create-document]]
+            [rewryte.message :refer [queue-doc]]))
 
 (defn find-text-files
   "Given a directory name, find all the text files in the directory"

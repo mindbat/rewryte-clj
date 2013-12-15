@@ -1,12 +1,13 @@
 (ns rewryte.calc.core
-  (:use opennlp.nlp, opennlp.tools.filters)
-  (:require [clojure.string :as clj-str]))
+  (:require [clojure.string :as clj-str]
+            [opennlp.nlp :as nlp]
+            [opennlp.tools.filters :as filters]))
 
-(pos-filter adverbs #"^RB")
+(filters/pos-filter adverbs #"^RB")
 
-(def pos-tag (make-pos-tagger "models/en-pos-maxent.bin"))
+(def pos-tag (nlp/make-pos-tagger "models/en-pos-maxent.bin"))
 
-(def tokenize (make-tokenizer "models/en-token.bin"))
+(def tokenize (nlp/make-tokenizer "models/en-token.bin"))
 
 (defn split-n
   "Split the given sequence into a vector of vectors made of every nth element of the original sequence.
@@ -46,7 +47,7 @@
   [text]
   (filter #(> (count %) 0) (clj-str/split text #"\n\n+")))
 
-(def convert-to-sentences (make-sentence-detector "models/en-sent.bin"))
+(def convert-to-sentences (nlp/make-sentence-detector "models/en-sent.bin"))
 
 (defn adverb?
   "Return true if the word given is an adverb"
