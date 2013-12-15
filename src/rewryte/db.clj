@@ -14,7 +14,7 @@
 (defn create-document
   "Create a new document in mongo db"
   [collection document]
-  (mcoll/insert-and-return collection document))
+  (mcoll/insert-and-return collection (merge document {:_id (ObjectId.)})))
 
 (defn update-document
   "Save the given document to the db"
@@ -63,3 +63,9 @@
   [collection-name doc-id]
   (let [oid (ObjectId. doc-id)]
     (mcoll/remove-by-id collection-name oid)))
+
+(defn save-new-document
+  "Save the new document text to mongodb"
+  [account-id document]
+  (let [doc {:account_id account-id :document (:text document)}]
+    (:_id (create-document "account" doc))))

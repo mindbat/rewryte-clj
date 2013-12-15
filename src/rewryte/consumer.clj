@@ -1,17 +1,24 @@
 (ns rewryte.consumer
-  (:use rewryte.calc.stats, rewryte.calc.edits, rewryte.genre, rewryte.db, rewryte.message)
-  (:require [clojure.string :as clj-str]))
+  (:require [clojure.string :as str]
+            [rewryte.calc.edits :refer [calculate-edits]]
+            [rewryte.calc.stats :refer [calculate-stats]]
+            [rewryte.db :refer [get-document delete-doc save-new-document
+                                update-document update-paragraph]]
+            [rewryte.genre :refer [update-genre-training-data]]
+            [rewryte.message :refer [publish-results queue-doc]]
+            [rewryte.s3 :refer [fetch-s3-document]]
+            [rewryte.tika :refer [extract-text]]))
 
 (defn parse-message
   "Parse an incoming message"
   [message-body]
-  (let [split-body (clj-str/split message-body #":")]
+  (let [split-body (str/split message-body #":")]
     {:account_id (first split-body) :doc_id (second split-body)}))
 
 (defn url-safe
   "Generate a url-safe version of the string"
   [text]
-  (clj-str/replace (clj-str/lower-case text) #"[^0-9a-zA-Z]" "_"))
+  (str/replace (str/lower-case text) #"[^0-9a-zA-Z]" "_"))
 
 (defn add-url-name
   "Add the url name for the document"
@@ -53,11 +60,13 @@
     (queue-doc "frequency.queue" account-id doc-id)
     (delete-doc "edit" edit-id)))
 
-(defn extract-consumer [[s3-id account-id]]
-  (->> (fetch-s3-document s3-id)
-      extract-text
-      (save-new-document account-id)
-      (queue-doc "frequency.queue" account-id)))
+(defn extract-consumer [message-body]
+  (let [s3-id message-body
+        account-id (first (str/split message-body #"-"))]
+    (->> (fetch-s3-document s3-id)
+         extract-text
+         (save-new-document account-id)
+         (queue-doc "frequency.queue" account-id))))
 
 (comment (defn paragraph-consumer
     "Process incoming messages from the paragraph queue"
