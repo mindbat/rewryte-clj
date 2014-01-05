@@ -64,8 +64,8 @@
   (let [oid (ObjectId. doc-id)]
     (mcoll/remove-by-id collection-name oid)))
 
-(defn save-new-document
+(defn create-new-document
   "Save the new document text to mongodb"
-  [account-id document]
-  (let [doc {:account_id account-id :document (:text document)}]
+  [account-id s3-id document]
+  (let [doc {:account_id account-id :s3_id s3-id :document (:text document)}]
     (:_id (create-document "account" doc))))
