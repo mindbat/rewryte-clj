@@ -1,23 +1,16 @@
 (ns rewryte.core
   (:gen-class :main true)
   (:require [rewryte.consumer :refer [extract-consumer
-                                      frequency-consumer
-                                      genre-train-consumer
-                                      paragraph-consumer]]
+                                      recommend-consumer]]
             [rewryte.db :refer [connect-to-doc-db!]]
             [rewryte.message :refer [start-consumer]]))
 
 (defn -main [consumer]
   (cond
-   (= consumer "frequency") (do
+   (= consumer "recommend") (do
                               (connect-to-doc-db!)
-                              (start-consumer "frequency.queue" frequency-consumer))
-   (= consumer "genre") (do
-                            (connect-to-doc-db!)
-                            (start-consumer "genre_train.queue" genre-train-consumer))
-   (= consumer "paragraph") (do
-                              (connect-to-doc-db!)
-                              (start-consumer "paragraph.queue" paragraph-consumer))
+                              (start-consumer "recommend.queue"
+                                              recommend-consumer))
    (= consumer "extract") (do
                               (connect-to-doc-db!)
                               (start-consumer "extract.queue" extract-consumer))
