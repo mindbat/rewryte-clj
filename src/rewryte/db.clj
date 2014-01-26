@@ -73,9 +73,9 @@
   "Save the new document text to mongodb"
   [account-id s3-id document]
   (let [existing-doc (find-s3-document account-id s3-id)
-        doc-text (:text document)]
+        new-doc (merge existing-doc {:document (:text document)})]
     (mcoll/update "account"
                   {:_id (:_id existing-doc)}
-                  {:document doc-text}
+                  new-doc
                   :write-concern WriteConcern/JOURNAL_SAFE)
     (:_id existing-doc)))
