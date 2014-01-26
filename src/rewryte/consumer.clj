@@ -68,7 +68,7 @@
         account-id (first (str/split message-body #"-"))]
     (->> (fetch-s3-document s3-id)
          extract-text
-         (save-new-document account-id s3-id)
+         (save-new-document (Integer/parseInt account-id) s3-id)
          (queue-doc "frequency.queue" account-id))))
 
 (comment (defn paragraph-consumer

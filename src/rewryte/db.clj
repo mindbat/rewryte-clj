@@ -73,7 +73,9 @@
   "Save the new document text to mongodb"
   [account-id s3-id document]
   (let [existing-doc (find-s3-document account-id s3-id)
-        new-doc {:account_id account-id :s3_id s3-id :document (:text document)}]
+        new-doc {:account_id account-id
+                 :s3_id s3-id
+                 :document (:text document)}]
     (if (empty? existing-doc)
       (:_id (create-document "account" new-doc))
       (:_id existing-doc))))
