@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [rewryte.calc.edits :refer [calculate-edits]]
             [rewryte.calc.stats :refer [calculate-stats]]
-            [rewryte.db :refer [save-new-document
+            [rewryte.db :refer [save-doc-text
                                 delete-doc
                                 get-document
                                 update-document
@@ -64,11 +64,11 @@
     (delete-doc "edit" edit-id)))
 
 (defn extract-consumer [message-body]
-  (let [s3-id message-body
-        account-id (first (str/split message-body #"-"))]
-    (->> (fetch-s3-document s3-id)
+  (let [[bucket s3-id] (str/split message-body #":")
+        account-id (first (str/split s3-id #"-"))]
+    (->> (fetch-s3-document bucket s3-id)
          extract-text
-         (save-new-document (Integer/parseInt account-id) s3-id)
+         (save-doc-text (Integer/parseInt account-id) s3-id)
          (queue-doc "frequency.queue" account-id))))
 
 (comment (defn paragraph-consumer

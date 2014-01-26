@@ -69,13 +69,13 @@
   (let [doc-match {:account_id account-id :s3_id s3-id}]
     (mcoll/find-one-as-map "account" doc-match)))
 
-(defn save-new-document
+(defn save-doc-text
   "Save the new document text to mongodb"
   [account-id s3-id document]
   (let [existing-doc (find-s3-document account-id s3-id)
-        new-doc {:account_id account-id
-                 :s3_id s3-id
-                 :document (:text document)}]
-    (if (empty? existing-doc)
-      (:_id (create-document "account" new-doc))
-      (:_id existing-doc))))
+        doc-text (:text document)]
+    (mcoll/update "account"
+                  {:_id (:_id existing-doc)}
+                  {:document doc-text}
+                  :write-concern WriteConcern/JOURNAL_SAFE)
+    (:_id existing-doc)))
