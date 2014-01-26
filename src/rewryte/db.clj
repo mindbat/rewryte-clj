@@ -78,4 +78,4 @@
                   {:_id (:_id existing-doc)}
                   new-doc
                   :write-concern WriteConcern/JOURNAL_SAFE)
-    (:_id existing-doc)))
+    (:_id new-doc)))
