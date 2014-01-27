@@ -2,6 +2,16 @@
   (:require [clojure.string :as str]
             [rewryte.db :refer [save-recommendations]]
             [rewryte.message :refer [publish-results]]
+            [rewryte.calc.edits :refer [calculate-edits]]
+            [rewryte.calc.stats :refer [calculate-stats]]
+            [rewryte.db :refer [save-doc-text
+                                save-recommendations
+                                delete-doc
+                                get-document
+                                update-document
+                                update-paragraph]]
+            [rewryte.genre :refer [update-genre-training-data]]
+            [rewryte.message :refer [publish-results queue-doc]]
             [rewryte.s3 :refer [fetch-s3-document]]
             [rewryte.tika :refer [extract-text]]))
 
