@@ -2,16 +2,6 @@
   (:require [clojure.string :as str]
             [rewryte.db :refer [save-recommendations]]
             [rewryte.message :refer [publish-results]]
-            [rewryte.calc.edits :refer [calculate-edits]]
-            [rewryte.calc.stats :refer [calculate-stats]]
-            [rewryte.db :refer [save-doc-text
-                                save-recommendations
-                                delete-doc
-                                get-document
-                                update-document
-                                update-paragraph]]
-            [rewryte.genre :refer [update-genre-training-data]]
-            [rewryte.message :refer [publish-results queue-doc]]
             [rewryte.s3 :refer [fetch-s3-document]]
             [rewryte.tika :refer [extract-text]]))
 
@@ -32,11 +22,21 @@
 
 (defn recommend-consumer
   [message-body]
-  (->> message-body
-       fetch-s3-document
-       extract-text
-       calculate-recommendations
-       add-url-name
-       realize-map
-       save-recommendations
-       publish-results))
+  (let [[bucket s3-id] (str/split message-body #":")
+        account-id (first (str/split s3-id #"-"))]
+    (->> (fetch-s3-document bucket s3-id)
+         extract-text
+         calculate-recommendations
+         add-url-name
+         realize-map
+         save-recommendations
+         publish-results)))
+
+
+#_(defn extract-consumer [message-body]
+  (let [[bucket s3-id] (str/split message-body #":")
+        account-id (first (str/split s3-id #"-"))]
+    (->> (fetch-s3-document bucket s3-id)
+         extract-text
+         (save-doc-text (Integer/parseInt account-id) s3-id)
+         (queue-doc "frequency.queue" account-id))))

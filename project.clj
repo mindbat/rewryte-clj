@@ -2,7 +2,7 @@
   :description "Application for calculating writing style"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [com.novemberain/langohr "1.4.1"]
-                 [com.novemberain/monger "1.5.0"]
+                 [com.novemberain/monger "1.7.0"]
                  [cheshire "5.2.0"]
                  [clj-tika "1.2.0-snapshot"]
                  [clojure-opennlp "0.2.0"]

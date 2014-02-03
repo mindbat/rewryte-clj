@@ -17,8 +17,8 @@
   (mcoll/insert-and-return collection (merge document {:_id (ObjectId.)})))
 
 (defn find-s3-document
-  [account-id s3-id]
-  (let [doc-match {:account_id account-id :s3_id s3-id}]
+  [s3-id]
+  (let [doc-match {:s3_id s3-id}]
     (mcoll/find-one-as-map "account" doc-match)))
 
 (defn update-recommendations
