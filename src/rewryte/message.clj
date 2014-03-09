@@ -33,14 +33,8 @@
 
 (defn publish-results
   "Notify any listeners that the document results are ready"
-  [{:keys [account_id url_name] :as doc-map}]
-  (rabbit-publish (str account_id "-response.queue") url_name))
-
-(defn send-results-published
-  "Notify rabbitmq that the account results are ready"
-  [account-id url-name]
-  (let [queue-name (str account-id "-response.queue")]
-    (rabbit-publish queue-name url-name)))
+  [{:keys [account_id s3-id] :as doc-map}]
+  (rabbit-publish (str account_id "-response.queue") s3-id))
 
 (defn queue-doc
   "Queue a document for further processing"
