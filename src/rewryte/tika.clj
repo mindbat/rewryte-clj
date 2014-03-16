@@ -9,5 +9,6 @@
   (second (re-find #"([a-zA-Z]+)\.[a-z]+" (.getName file))))
 
 (defn extract-text
-  [thing]
-  (tika/parse thing))
+  "Extracts the text from the input stream indicated in the doc-map"
+  [doc-map]
+  (merge (dissoc doc-map :input-stream) (tika/parse (:input-stream doc-map))))
