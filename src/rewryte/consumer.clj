@@ -25,9 +25,9 @@
          extract-text
          (save-plain-text-doc plain-bucket)
          calculate-recommendations
-         realize-map
+         #_realize-map
          save-recommendations
-         publish-results)))
+         (publish-results account-id))))
 
 #_(defn extract-consumer [message-body]
   (let [[bucket s3-id] (str/split message-body #":")

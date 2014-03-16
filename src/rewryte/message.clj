@@ -33,8 +33,8 @@
 
 (defn publish-results
   "Notify any listeners that the document results are ready"
-  [{:keys [account_id s3-id] :as doc-map}]
-  (rabbit-publish (str account_id "-response.queue") s3-id))
+  [account-id {:keys [s3-id] :as doc-map}]
+  (rabbit-publish (str account-id "-response.queue") s3-id))
 
 (defn queue-doc
   "Queue a document for further processing"
