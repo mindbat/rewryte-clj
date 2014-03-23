@@ -18,6 +18,7 @@
 (defn recommend-consumer
   [message-body]
   (let [[bucket s3-id report-id] (str/split message-body #":")
+        report-id (Integer/parseInt report-id)
         account-id (first (str/split s3-id #"-"))
         plain-bucket (if (.contains bucket "dev")
                        "rewryte-plain-dev"
