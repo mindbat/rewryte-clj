@@ -27,11 +27,3 @@
          calculate-recommendations
          (save-recommendations report-id)
          (publish-results account-id))))
-
-#_(defn extract-consumer [message-body]
-  (let [[bucket s3-id] (str/split message-body #":")
-        account-id (first (str/split s3-id #"-"))]
-    (->> (fetch-s3-document bucket s3-id)
-         extract-text
-         (save-doc-text (Integer/parseInt account-id) s3-id)
-         (queue-doc "frequency.queue" account-id))))
