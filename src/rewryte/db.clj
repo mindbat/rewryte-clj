@@ -6,9 +6,8 @@
 
 (defdb devdev (postgres {:db (get (System/getenv) "PGSQL_DB" "rewryte")
                          :user (get (System/getenv) "PGSQL_USER" "admin")
-                         :password (get (System/getenv) "PGSQL_PASS" nil)
-                         :host (get (System/getenv) "PGSQL_HOST" "localhost")
-                         :port (get (System/getenv) "PGSQL_PORT" nil)}))
+                         :password (get (System/getenv) "PGSQL_PASS" "")
+                         :host (get (System/getenv) "PGSQL_HOST" "localhost")}))
 
 (defentity cliche
   (pk :id)
