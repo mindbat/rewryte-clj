@@ -3,15 +3,7 @@
                                 fields insert pk select table values where]]
    [korma.db :refer [defdb postgres]]))
 
-(def db-map
-  (let [system-env (System/getenv)]
-    {:db (get system-env "PGSQL_DB" "rewryte")
-     :user (get system-env "PGSQL_USER" "admin")
-     :password (get system-env "PGSQL_PASS" "")
-     :host (get system-env "PGSQL_HOST" "localhost")
-     :port (get system-env "PGSQL_PORT" "")}))
-
-(defdb rewrytedb (postgres db-map))
+(defdb devdev (postgres {:db "rewryte" :user "admin"}))
 
 (defentity cliche
   (pk :id)
