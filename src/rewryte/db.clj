@@ -1,6 +1,6 @@
 (ns rewryte.db
   (:require [korma.core :refer [belongs-to defentity entity-fields
-                                fields pk select table]]
+                                fields pk select table where]]
    [korma.db :refer [defdb postgres]]))
 
 (defdb devdb (postgres {:db "rewryte"
@@ -29,12 +29,21 @@
   (belongs-to report))
 
 (defn get-recommendation-type
-  [type-name])
+  [type-name]
+  (select recommendation-type
+          (where {:name type-name})))
 
 (defn save-recommendations
   "Save the new recommendations to postgresql"
-  [{:keys [account-id s3-id cliches] :as doc-map}]
-  (let [cliche-type (get-recommendation-type "cliche")]))
+  [report-id {:keys [cliches] :as doc-map}]
+  (let [cliche-type (:id (get-recommendation-type "Cliches"))]
+    (for [[char-offset num-chars] cliches]
+      (insert recommendation
+              (values {:char_offset char-offset
+                       :num_chars num-chars
+                       :recommendation_type_id cliche-type
+                       :report_id report-id})))
+    doc-map))
 
 (defn get-cliches
   []

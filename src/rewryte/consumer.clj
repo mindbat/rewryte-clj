@@ -25,8 +25,7 @@
          extract-text
          (save-plain-text-doc plain-bucket)
          calculate-recommendations
-         #_realize-map
-         save-recommendations
+         (save-recommendations report-id)
          (publish-results account-id))))
 
 #_(defn extract-consumer [message-body]
