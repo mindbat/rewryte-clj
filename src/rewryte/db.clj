@@ -1,9 +1,14 @@
 (ns rewryte.db
   (:require [korma.core :refer [belongs-to defentity entity-fields
-                                fields insert pk select table values where]]
+                                fields insert pk select set-fields table
+                                update values where]]
    [korma.db :refer [defdb postgres]]))
 
-(defdb devdev (postgres {:db "rewryte" :user "admin"}))
+(defdb devdev (postgres {:db (get (System/getenv) "PGSQL_DB" "rewryte")
+                         :user (get (System/getenv) "PGSQL_USER" "admin")
+                         :password (get (System/getenv) "PGSQL_PASS" nil)
+                         :host (get (System/getenv) "PGSQL_HOST" "localhost")
+                         :port (get (System/getenv) "PGSQL_PORT" nil)}))
 
 (defentity cliche
   (pk :id)
@@ -47,3 +52,10 @@
 (defn get-cliches
   []
   (map (comp re-pattern :expression) (select cliche (fields :expression))))
+
+(defn set-report-completed
+  [report-id doc-map]
+  (update report
+          (set-fields {:completed_at (java.util.Date.)})
+          (where {:id report-id}))
+  doc-map)

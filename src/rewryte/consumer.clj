@@ -1,6 +1,7 @@
 (ns rewryte.consumer
   (:require [clojure.string :as str]
-            [rewryte.db :refer [save-recommendations]]
+            [rewryte.db :refer [save-recommendations
+                                set-report-completed]]
             [rewryte.calc :refer [calculate-recommendations]]
             [rewryte.message :refer [publish-results]]
             [rewryte.s3 :refer [fetch-s3-document
@@ -26,4 +27,5 @@
          (save-plain-text-doc plain-bucket)
          calculate-recommendations
          (save-recommendations report-id)
+         (set-report-completed report-id)
          (publish-results account-id))))
