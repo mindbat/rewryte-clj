@@ -12,10 +12,18 @@
           offsets
           (recur (+ offset sub-length) (conj offsets [offset sub-length])))))))
 
+(defn find-cliche-matches
+  [cliches text]
+  (let [match-seq (mapcat #(re-seq % text) cliches)]
+    (for [match match-seq]
+      (if (coll? match)
+        (first match)
+        match))))
+
 (defn calculate-recommendations
   [doc-map]
   (let [cliches (get-cliches)
         text (:text doc-map)]
     (assoc doc-map :cliches
            (mapcat (partial find-offsets text)
-                   (mapcat #(re-seq % text) cliches)))))
+                   (find-cliche-matches cliches text)))))

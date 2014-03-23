@@ -7,6 +7,7 @@
                  [clojure-opennlp "0.2.0"]
                  [com.novemberain/langohr "1.4.1"]
                  [org.apache.tika/tika-parsers "1.4"]
-                 [korma "0.3.0-RC6"]]
+                 [korma "0.3.0-RC6"]
+                 [org.postgresql/postgresql "9.2-1004-jdbc4"]]
   :main rewryte.core
   :uberjar-name "rewryte.jar")
