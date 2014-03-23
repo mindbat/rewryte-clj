@@ -1,10 +1,17 @@
 (ns rewryte.db
   (:require [korma.core :refer [belongs-to defentity entity-fields
-                                fields pk select table where]]
+                                fields insert pk select table values where]]
    [korma.db :refer [defdb postgres]]))
 
-(defdb devdb (postgres {:db "rewryte"
-                        :user "admin"}))
+(def db-map
+  (let [system-env (System/getenv)]
+    {:db (get system-env "PGSQL_DB" "rewryte")
+     :user (get system-env "PGSQL_USER" "admin")
+     :password (get system-env "PGSQL_PASS" "")
+     :host (get system-env "PGSQL_HOST" "localhost")
+     :port (get system-env "PGSQL_PORT" "")}))
+
+(defdb rewrytedb (postgres db-map))
 
 (defentity cliche
   (pk :id)
