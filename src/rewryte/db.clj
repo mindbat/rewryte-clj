@@ -1,80 +1,64 @@
 (ns rewryte.db
-  (:require [monger.core :as mcore]
-            [monger.collection :as mcoll]
-            [monger.operators :refer [$set]])
-  (:import com.mongodb.WriteConcern [org.bson.types ObjectId]))
+  (:require [clj-time.core :as t]
+            [clj-time.coerce :as tc]
+            [korma.core :refer [belongs-to defentity entity-fields
+                                fields insert pk select set-fields table
+                                update values where]]
+            [korma.db :refer [defdb postgres]]))
 
-(def mongo-host (get (System/getenv) "MONGOLAB_URI" "mongodb://127.0.0.1:27017/docs"))
+(defdb devdev (postgres {:db (get (System/getenv) "PGSQL_DB" "rewryte")
+                         :user (get (System/getenv) "PGSQL_USER" "admin")
+                         :password (get (System/getenv) "PGSQL_PASS" "")
+                         :host (get (System/getenv) "PGSQL_HOST" "localhost")}))
 
-(defn connect-to-doc-db!
-  "Connect to the database holding documents for processing"
-  []
-  (mcore/connect-via-uri! mongo-host))
+(defentity cliche
+  (pk :id)
+  (table :cliche)
+  (entity-fields :id :expression))
 
-(defn create-document
-  "Create a new document in mongo db"
-  [collection document]
-  (mcoll/insert-and-return collection (merge document {:_id (ObjectId.)})))
+(defentity recommendation-type
+  (pk :id)
+  (table :recommendation_type)
+  (entity-fields :id :name :description))
 
-(defn update-document
-  "Save the given document to the db"
-  [coll-name doc-map]
-  (let [doc-match {:_id (:_id doc-map)}
-        doc-update (dissoc doc-map :account_id :_id :document :document_name)]
-    (mcoll/update coll-name doc-match {$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)
+(defentity report
+  (pk :id)
+  (table :report)
+  (entity-fields :id :completed_at))
+
+(defentity recommendation
+  (pk :id)
+  (table :recommendation)
+  (entity-fields :id :char_offset :num_chars)
+  (belongs-to recommendation-type)
+  (belongs-to report))
+
+(defn get-recommendation-type
+  [type-name]
+  (first (select recommendation-type
+                 (where {:name type-name}))))
+
+(defn save-recommendations
+  "Save the new recommendations to postgresql"
+  [report-id {:keys [cliches] :as doc-map}]
+  (let [cliche-type (:id (get-recommendation-type "Cliches"))]
+    (doseq [[char-offset num-chars] cliches]
+      (insert recommendation
+              (values {:char_offset char-offset
+                       :num_chars num-chars
+                       :recommendation_type_id cliche-type
+                       :report_id report-id
+                       :created_at (tc/to-sql-time (t/now))
+                       :updated_at (tc/to-sql-time (t/now))})))
     doc-map))
 
-(defn save-results
-  "Save the given results to mongodb"
-  [account-id doc-id url-name results-full results-standard frequencies max-frequency-full max-frequency-standard paragraphs longest-sentences most-adverbs sentence-length paragraph-length-words paragraph-length-sentences]
-  (let [doc-match {:account_id account-id :_id (ObjectId. doc-id)}
-        doc-update {:frequencies frequencies :url_name url-name :results_full {:max_frequency max-frequency-full, :results results-full} :results_standard {:max_frequency max-frequency-standard, :results results-standard} :paragraphs paragraphs :longest_sentences longest-sentences :most_adverbs most-adverbs :sentence_length sentence-length :paragraph_length_words paragraph-length-words :paragraph_length_sentences paragraph-length-sentences}]
-    (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
+(defn get-cliches
+  []
+  (map (comp re-pattern :expression) (select cliche (fields :expression))))
 
-(defn get-document
-  "Fetch the given document from mongodb"
-  [coll-name doc-map]
-  (let [doc-match {:_id (ObjectId. (:doc_id doc-map))}]
-    (mcoll/find-one-as-map coll-name doc-match)))
-
-(defn search-collection
-  "Execute the given search query against the given collection"
-  [query collection]
-  (let [mongo-db (mcore/get-db "docs")]
-    (mcoll/find-maps collection query)))
-
-(defn update-paragraph
-  "Update the paragraph text for a given mongo document"
-  [edit-doc]
-  (let [edited-doc-id (edit-doc :edited_document_id)
-        account-id (edit-doc :account_id)
-        original-doc (get-document "account" {:doc_id edited-doc-id})
-        paragraphs (original-doc :paragraphs)
-        edited-index (edit-doc :paragraph_number)
-        new-text (edit-doc :new_text)
-        updated-paragraphs (assoc paragraphs edited-index new-text)
-        updated-doc-text (clojure.string/join "\n\n" updated-paragraphs)
-        doc-match {:account_id account-id :_id (ObjectId. edited-doc-id)}
-        doc-update {:document updated-doc-text}]
-    (mcoll/update "account" doc-match {:$set doc-update} :write-concern WriteConcern/JOURNAL_SAFE)))
-
-(defn delete-doc
-  "Delete the given document from mongo-db"
-  [collection-name doc-id]
-  (let [oid (ObjectId. doc-id)]
-    (mcoll/remove-by-id collection-name oid)))
-
-(defn find-s3-document
-  [account-id s3-id]
-  (let [doc-match {:account_id account-id :s3_id s3-id}]
-    (mcoll/find-one-as-map "account" doc-match)))
-
-(defn save-doc-text
-  "Save the new document text to mongodb"
-  [account-id s3-id document]
-  (let [existing-doc (find-s3-document account-id s3-id)]
-    (mcoll/update "account"
-                  {:_id (:_id existing-doc)}
-                  {$set {:document (:text document)}}
-                  :write-concern WriteConcern/JOURNAL_SAFE)
-    (.toString (:_id existing-doc))))
+(defn set-report-completed
+  [report-id doc-map]
+  (update report
+          (set-fields {:completed_at (tc/to-sql-time (t/now))})
+          (where {:id report-id}))
+  doc-map)
