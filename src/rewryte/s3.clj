@@ -13,4 +13,5 @@
 
 (defn save-plain-text-doc
   [bucket doc-map]
-  (s3/put-object cred bucket (:s3-id doc-map) (:text doc-map)))
+  (s3/put-object cred bucket (:s3-id doc-map) (:text doc-map))
+  doc-map)
