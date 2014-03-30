@@ -4,6 +4,7 @@
                  [cheshire "5.2.0"]
                  [clj-aws-s3 "0.3.7"]
                  [clj-tika "1.2.0-snapshot"]
+                 [clj-time "0.6.0"]
                  [clojure-opennlp "0.2.0"]
                  [com.novemberain/langohr "1.4.1"]
                  [org.apache.tika/tika-parsers "1.4"]

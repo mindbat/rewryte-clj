@@ -1,8 +1,10 @@
 (ns rewryte.db
-  (:require [korma.core :refer [belongs-to defentity entity-fields
+  (:require [clj-time.core :as t]
+            [clj-time.coerce :as tc]
+            [korma.core :refer [belongs-to defentity entity-fields
                                 fields insert pk select set-fields table
                                 update values where]]
-   [korma.db :refer [defdb postgres]]))
+            [korma.db :refer [defdb postgres]]))
 
 (defdb devdev (postgres {:db (get (System/getenv) "PGSQL_DB" "rewryte")
                          :user (get (System/getenv) "PGSQL_USER" "admin")
@@ -33,19 +35,21 @@
 
 (defn get-recommendation-type
   [type-name]
-  (select recommendation-type
-          (where {:name type-name})))
+  (first (select recommendation-type
+                 (where {:name type-name}))))
 
 (defn save-recommendations
   "Save the new recommendations to postgresql"
   [report-id {:keys [cliches] :as doc-map}]
   (let [cliche-type (:id (get-recommendation-type "Cliches"))]
-    (for [[char-offset num-chars] cliches]
+    (doseq [[char-offset num-chars] cliches]
       (insert recommendation
               (values {:char_offset char-offset
                        :num_chars num-chars
                        :recommendation_type_id cliche-type
-                       :report_id report-id})))
+                       :report_id report-id
+                       :created_at (tc/to-sql-time (t/now))
+                       :updated_at (tc/to-sql-time (t/now))})))
     doc-map))
 
 (defn get-cliches
@@ -55,6 +59,6 @@
 (defn set-report-completed
   [report-id doc-map]
   (update report
-          (set-fields {:completed_at (java.util.Date.)})
+          (set-fields {:completed_at (tc/to-sql-time (t/now))})
           (where {:id report-id}))
   doc-map)
