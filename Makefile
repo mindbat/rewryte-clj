@@ -1,2 +1,2 @@
-run:
-	lein run -m rewryte.core frequency
+run-%:
+	lein run -m rewryte.core $*

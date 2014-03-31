@@ -41,7 +41,7 @@
 (defn save-recommendations
   "Save the new recommendations to postgresql"
   [report-id {:keys [cliches] :as doc-map}]
-  (let [cliche-type (:id (get-recommendation-type "Cliches"))]
+  (let [cliche-type (:id (get-recommendation-type "Cliche"))]
     (doseq [[char-offset num-chars] cliches]
       (insert recommendation
               (values {:char_offset char-offset
