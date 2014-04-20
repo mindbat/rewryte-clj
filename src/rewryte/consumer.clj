@@ -4,7 +4,8 @@
                                 set-report-completed]]
             [rewryte.calc :refer [calculate-recommendations]]
             [rewryte.message :refer [publish-results]]
-            [rewryte.s3 :refer [fetch-s3-document
+            [rewryte.s3 :refer [fetch-all-documents
+                                fetch-s3-document
                                 save-plain-text-doc]]
             [rewryte.tika :refer [extract-text]]))
 
@@ -14,6 +15,13 @@
   (reduce #(assoc %1 (first %2) @(second %2))
           future-map
           (filter #(future? (second %)) future-map)))
+
+(defn convert-all-docs-to-plain-text
+  [original-bucket plain-bucket]
+  (doseq [doc (fetch-all-documents original-bucket)]
+    (->> doc
+        extract-text
+        (save-plain-text-doc plain-bucket))))
 
 (defn recommend-consumer
   [message-body]
