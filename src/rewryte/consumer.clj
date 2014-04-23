@@ -19,9 +19,11 @@
 (defn convert-all-docs-to-plain-text
   [original-bucket plain-bucket]
   (doseq [doc (fetch-all-documents original-bucket)]
-    (->> doc
-        extract-text
-        (save-plain-text-doc plain-bucket))))
+    (try
+      (->> doc
+           extract-text
+           (save-plain-text-doc plain-bucket))
+      (catch Exception ex))))
 
 (defn recommend-consumer
   [message-body]
