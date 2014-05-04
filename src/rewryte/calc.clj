@@ -15,8 +15,9 @@
 
 (defn find-cliche-matches
   [cliches text]
-  (let [match-seq (mapcat #([(:id %) (re-seq (:expression %) text)])
-                          cliches)]
+  (let [match-seq (filter #(not (nil? (second %)))
+                          (map #(vector (:id %) (re-seq (:expression %) text))
+                               cliches))]
     (for [[id match] match-seq]
       (if (coll? match)
         [id (first match)]
