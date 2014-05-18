@@ -33,10 +33,12 @@
         plain-bucket (if (.contains bucket "dev")
                        "rewryte-plain-dev"
                        "rewryte-plain")]
-    (->> (fetch-s3-document bucket s3-id)
-         extract-text
-         (save-plain-text-doc plain-bucket)
-         calculate-recommendations
-         (save-recommendations report-id)
-         (set-report-completed report-id)
-         (publish-results account-id))))
+    (try (->> (fetch-s3-document bucket s3-id)
+              extract-text
+              (save-plain-text-doc plain-bucket)
+              calculate-recommendations
+              (save-recommendations report-id)
+              (set-report-completed report-id)
+              (publish-results account-id))
+         (catch Exception ex
+           (println (.getMessage ex))))))
