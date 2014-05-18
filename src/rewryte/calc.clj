@@ -13,15 +13,24 @@
           (recur (+ offset sub-length)
                  (conj offsets [id offset sub-length])))))))
 
+(defn fix-match-seq
+  [expression text]
+  (map #(if (string? %)
+          %
+          (first %))
+       (re-seq expression text)))
+
 (defn find-cliche-matches
   [cliches text]
-  (let [match-seq (filter #(not (nil? (second %)))
-                          (map #(vector (:id %) (re-seq (:expression %) text))
-                               cliches))]
-    (for [[id match] match-seq]
-      (if (coll? match)
-        [id (first match)]
-        [id match]))))
+  (reduce (fn [coll val]
+            (let [id (:id val)
+                  match-seq (fix-match-seq (:expression val) text)]
+              (if (seq match-seq)
+                (apply conj coll (for [match match-seq]
+                                   [id match]))
+                coll)))
+             []
+             cliches))
 
 (defn calculate-recommendations
   [doc-map]
