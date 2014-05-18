@@ -3,27 +3,39 @@
 
 (defn find-offsets
   "Find the indexes at which the given sub string occurs in the larger string"
-  [search-string sub-string]
+  [search-string [id sub-string]]
   (let [sub-length (.length sub-string)]
     (loop [idx 0
            offsets []]
       (let [offset (.indexOf search-string sub-string idx)]
         (if (= offset -1)
           offsets
-          (recur (+ offset sub-length) (conj offsets [offset sub-length])))))))
+          (recur (+ offset sub-length)
+                 (conj offsets [id offset sub-length])))))))
+
+(defn fix-match-seq
+  [expression text]
+  (map #(if (string? %)
+          %
+          (first %))
+       (re-seq expression text)))
 
 (defn find-cliche-matches
   [cliches text]
-  (let [match-seq (mapcat #(re-seq % text) cliches)]
-    (for [match match-seq]
-      (if (coll? match)
-        (first match)
-        match))))
+  (reduce (fn [coll val]
+            (let [id (:id val)
+                  match-seq (fix-match-seq (:expression val) text)]
+              (if (seq match-seq)
+                (apply conj coll (for [match match-seq]
+                                   [id match]))
+                coll)))
+             []
+             cliches))
 
 (defn calculate-recommendations
   [doc-map]
   (let [cliches (get-cliches)
         text (:text doc-map)]
     (assoc doc-map :cliches
-           (mapcat (partial find-offsets text)
-                   (find-cliche-matches cliches text)))))
+           (doall (mapcat (partial find-offsets text)
+                          (find-cliche-matches cliches text))))))

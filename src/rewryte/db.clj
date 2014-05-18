@@ -11,9 +11,9 @@
                          :password (get (System/getenv) "PGSQL_PASS" "")
                          :host (get (System/getenv) "PGSQL_HOST" "localhost")}))
 
-(defentity cliche
+(defentity recommendation-expression
   (pk :id)
-  (table :cliche)
+  (table :recommendation_expression)
   (entity-fields :id :expression))
 
 (defentity recommendation-type
@@ -30,7 +30,7 @@
   (pk :id)
   (table :recommendation)
   (entity-fields :id :char_offset :num_chars)
-  (belongs-to recommendation-type)
+  (belongs-to recommendation-expression)
   (belongs-to report))
 
 (defn get-recommendation-type
@@ -41,20 +41,24 @@
 (defn save-recommendations
   "Save the new recommendations to postgresql"
   [report-id {:keys [cliches] :as doc-map}]
-  (let [cliche-type (:id (get-recommendation-type "Cliche"))]
-    (doseq [[char-offset num-chars] cliches]
-      (insert recommendation
-              (values {:char_offset char-offset
-                       :num_chars num-chars
-                       :recommendation_type_id cliche-type
-                       :report_id report-id
-                       :created_at (tc/to-sql-time (t/now))
-                       :updated_at (tc/to-sql-time (t/now))})))
-    doc-map))
+  (doseq [[cliche-id char-offset num-chars] cliches]
+    (insert recommendation
+            (values {:char_offset char-offset
+                     :num_chars num-chars
+                     :recommendation_expression_id cliche-id
+                     :report_id report-id
+                     :created_at (tc/to-sql-time (t/now))
+                     :updated_at (tc/to-sql-time (t/now))})))
+  doc-map)
 
 (defn get-cliches
   []
-  (map (comp re-pattern :expression) (select cliche (fields :expression))))
+  (let [cliche-type-id (:id (get-recommendation-type "Cliche"))]
+    (map #(update-in % [:expression] re-pattern)
+         (select recommendation-expression
+                 (fields :id :expression)
+                 (where {:recommendation_type_id
+                         cliche-type-id})))))
 
 (defn set-report-completed
   [report-id doc-map]
