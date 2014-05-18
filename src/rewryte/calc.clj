@@ -37,5 +37,5 @@
   (let [cliches (get-cliches)
         text (:text doc-map)]
     (assoc doc-map :cliches
-           (mapcat (partial find-offsets text)
-                   (find-cliche-matches cliches text)))))
+           (doall (mapcat (partial find-offsets text)
+                          (find-cliche-matches cliches text))))))
