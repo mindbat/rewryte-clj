@@ -1,5 +1,6 @@
 (ns rewryte.consumer
   (:require [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [rewryte.db :refer [save-recommendations
                                 set-report-completed]]
             [rewryte.calc :refer [calculate-recommendations]]
@@ -27,6 +28,7 @@
 
 (defn recommend-consumer
   [message-body]
+  (log/info "new message:" message-body)
   (let [[bucket s3-id report-id] (str/split message-body #":")
         report-id (Integer/parseInt report-id)
         account-id (first (str/split s3-id #"-"))
@@ -41,4 +43,4 @@
               (set-report-completed report-id)
               (publish-results account-id))
          (catch Exception ex
-           (println (.getMessage ex))))))
+           (log/error "exception during processing" (.getMessage ex))))))

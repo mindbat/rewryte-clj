@@ -1,5 +1,6 @@
 (ns rewryte.calc
-  (:require [rewryte.db :refer [get-cliches]]))
+  (:require [rewryte.db :refer [get-cliches]]
+            [clojure.tools.logging :as log]))
 
 (defn find-offsets
   "Find the indexes at which the given sub string occurs in the larger string"
@@ -34,6 +35,7 @@
 
 (defn calculate-recommendations
   [doc-map]
+  (log/info "calculating recommendations")
   (let [cliches (get-cliches)
         text (:text doc-map)]
     (assoc doc-map :cliches
