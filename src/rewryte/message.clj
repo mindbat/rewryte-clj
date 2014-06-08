@@ -3,7 +3,8 @@
             [langohr.channel :as lch]
             [langohr.queue :as lq]
             [langohr.basic :as lb]
-            [langohr.consumers :as lc]))
+            [langohr.consumers :as lc]
+            [clojure.tools.logging :as log]))
 
 (def rewryte-broker {:uri (get (System/getenv) "RABBITMQ_URL" "amqp://guest:guest@127.0.0.1")})
 
@@ -15,6 +16,7 @@
 (defn start-consumer
   "Start up a consumer for a given queue"
   [queue-name consumer-function]
+  (log/info "starting up new consumer")
   (let [connection (rmq/connect rewryte-broker)
         channel (lch/open connection)
         handler (fn [channel metadata ^bytes payload]
@@ -34,6 +36,7 @@
 (defn publish-results
   "Notify any listeners that the document results are ready"
   [account-id {:keys [s3-id] :as doc-map}]
+  (log/info "publishing results" account-id s3-id)
   (rabbit-publish (str account-id "-response.queue") s3-id))
 
 (defn queue-doc
